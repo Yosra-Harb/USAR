@@ -1,101 +1,167 @@
-USAR Intelligent Rescue System
-Team Workstreams and Ownership Plan
-Document: 04_Team_Workstreams.md
-Project: USAR Intelligent Rescue System
-Team Size: 5 Members
-Delivery Model: Hybrid Agile
-Primary Goal: Balanced ownership with maximum parallel development and controlled integration  
-1. Purpose
+# USAR Intelligent Rescue System
+## Team Workstreams and Ownership Plan
+
+**Document:** `04_Team_Workstreams.md`  
+**Project:** USAR Intelligent Rescue System  
+**Team Size:** 5 Members  
+**Delivery Model:** Hybrid Agile / Scrum-style Sprints  
+**Primary Goal:** Balanced technical ownership, parallel development, Hardware-in-the-Loop as a core capability, and controlled integration  
+
+---
+
+# 1. Purpose
+
 This document defines how the USAR Intelligent Rescue System is divided across five team members.
-The allocation is designed to achieve the following goals:
+
+The allocation is designed to:
+
 - distribute technical workload as evenly as practical;
-- allow all five members to work in parallel from the beginning;
-- avoid assigning one member only documentation or coordination work;
+- allow all five members to work in parallel from Sprint 0;
+- keep the microcontroller and Hardware-in-the-Loop path as core project scope;
 - preserve clear technical ownership;
 - reduce blocking dependencies;
 - require peer review across workstreams;
 - maintain continuous integration;
-- and ensure that the final result is one integrated system rather than five isolated student projects.
-The project architecture is intentionally interface-driven so every workstream can develop against mocks, fixtures, or recorded data before upstream modules are fully available.
-2. Team Structure
+- preserve research integrity and the ground-truth firewall;
+- and ensure that the final result is one integrated rescue system rather than five isolated student projects.
+
+The architecture is interface-driven. Every workstream shall be independently developable and testable using mocks, fixtures, recorded data, or emulated hardware packets before every upstream component is complete.
+
+---
+
+# 2. Final Team Structure
+
 The project is divided into five primary technical workstreams:
-1. Simulation and Mission Systems
-2. Sensors, Embedded Integration, and Signal Processing
-3. Adaptive Fusion and Reliability Intelligence
-4. Localization, Victim Tracking, and Rescue Decision
-5. AI Intelligence and Operational Dashboard
+
+1. **Simulation and Mission Systems**
+2. **Sensors, Microcontroller, Acquisition, and Signal Processing**
+3. **HAIF Fusion and Localization**
+4. **Victim Tracking, AI Intelligence, Vitality, and Rescue Decision**
+5. **Backend, Operational Dashboard, and System Integration**
+
 Each member owns one primary workstream.
+
 Every workstream includes:
+
+- design;
 - implementation;
 - testing;
 - documentation;
 - integration support;
 - code review;
 - and evidence of completion.
-No member is assigned only project-management or documentation responsibilities.
-3. Workload Balancing Principle
-Workload balance shall be evaluated based on:
+
+No member is assigned only documentation or project-management responsibilities.
+
+The **Technical Lead / Delivery Coordinator** role is additional to one member's technical workstream and does not replace technical ownership.
+
+---
+
+# 3. Workload Balancing Principle
+
+Workload balance shall be evaluated using:
+
 - algorithmic complexity;
 - implementation effort;
 - integration difficulty;
 - testing burden;
 - debugging risk;
 - experimental responsibility;
+- hardware dependency;
+- cross-language integration;
 - and expected maintenance effort.
-The project shall not be considered balanced merely because each person receives the same number of tasks.
-The team should periodically review actual workload during sprint planning and redistribute secondary tasks when one workstream becomes significantly heavier.
-4. Workstream 1 — Simulation and Mission Systems
-Owner
-Team Member 1
-Role Title
-Simulation and Mission Systems Engineer
-Mission
-Build and maintain the rescue simulation environment and mission-control infrastructure used by the rest of the system.
-Core Responsibilities
-4.1 Scenario Generation
-Implement and maintain scenario generation for:
+
+The project is not considered balanced merely because every member receives the same number of Jira issues.
+
+During Sprint Planning, the team shall compare actual workload and may redistribute **secondary tasks** while keeping ownership of core algorithms stable.
+
+---
+
+# 4. Workstream 1 — Simulation and Mission Systems
+
+## Owner
+
+**Team Member 1**
+
+## Role Title
+
+**Simulation and Mission Systems Engineer**
+
+## Mission
+
+Build and maintain the rescue simulation environment, mission model, probe behavior, search strategy, reproducible scenario generation, and simulation-only ground truth used by the rest of the system.
+
+## Core Responsibilities
+
+### 4.1 Scenario Generation
+
+Implement and maintain the approved scenarios:
+
 - Ideal;
 - Dense Debris;
 - High Noise;
 - Deep Burial;
 - Multiple Victims;
 - Weak Vital Signs.
+
 Scenario parameters include:
+
 - debris density;
 - environmental noise;
 - burial depth;
 - victim count;
-- victim position;
+- victim positions;
 - vital strength;
-- sensor-degradation settings;
+- sensor-degradation configuration;
 - structural obstacles;
 - random seed.
-4.2 Ground Truth
+
+### 4.2 Ground Truth Firewall
+
 Maintain simulation-only ground truth including:
+
 - true victim count;
 - true victim coordinates;
 - victim identity;
 - scenario configuration;
-- simulated condition metadata.
-Ground truth must not leak into operational algorithms.
-4.3 Probe Model
+- simulated vitality parameters;
+- environment metadata.
+
+Ground truth shall be available only to evaluation and testing. It shall not enter fusion, localization, tracking, AI inference, vitality, or rescue-decision logic.
+
+### 4.3 Probe Model
+
 Implement and maintain:
+
 - probe initialization;
 - probe state;
 - current position;
 - trajectory;
 - visited cells;
-- coverage state.
-4.4 Search Path
+- coverage state;
+- waypoint information.
+
+### 4.4 Search Path
+
 Implement systematic mission coverage such as:
+
+```text
 Boustrophedon Search
+```
+
 and maintain:
+
 - path history;
 - visited cells;
 - coverage percentage;
-- next waypoint logic.
-4.5 Mission Controller
-Maintain mission states such as:
+- next-waypoint logic;
+- obstacle-aware movement where required.
+
+### 4.5 Mission Controller
+
+Maintain mission states including:
+
+```text
 INITIALIZING
 MOVING
 SENSING
@@ -104,56 +170,97 @@ DECISION
 UPDATE
 COMPLETED
 ERROR
-4.6 Simulation Events
+```
+
+### 4.6 Mission Events
+
 Emit mission events required by:
+
 - processing;
-- dashboard;
+- backend integration;
+- dashboard timeline;
 - testing;
 - evaluation.
-Expected Core Modules
+
+## Expected Core Modules
+
 Examples:
+
+```text
 createScenario
 createProbe
 missionController
 runProbeSimulation
-Inputs
+searchAlgorithms
+updateCoverage
+```
+
+## Inputs
+
 - scenario configuration;
-- seed;
+- random seed;
 - mission settings.
-Outputs
+
+## Outputs
+
+- `ScenarioContext`;
 - environment state;
 - probe state;
-- sensing context;
 - mission state;
+- simulation events;
 - evaluation-only ground truth.
-Main Deliverables
+
+## Main Deliverables
+
 - configurable scenario engine;
+- deterministic scenario generation;
 - mission controller;
+- probe model;
 - search-path implementation;
 - coverage tracking;
 - mission-state logging;
 - scenario fixtures;
 - simulation tests.
-Testing Responsibilities
+
+## Testing Responsibilities
+
 - deterministic seed tests;
 - scenario-generation tests;
 - victim-placement tests;
 - mission-state transition tests;
 - path-coverage tests;
-- no-ground-truth-leakage tests.
-Parallel Development Strategy
-This workstream can begin immediately.
-Other members do not need to wait for the final simulation engine because mock inputs shall be provided through shared fixtures.
-5. Workstream 2 — Sensors, Embedded Integration, and Signal Processing
-Owner
-Team Member 2
-Role Title
-Sensor and Embedded Systems Engineer
-Mission
-Own the system input layer from physical or simulated sensor observations through validated and normalized sensing evidence.
-Core Responsibilities
-5.1 UWB Radar Processing
+- ground-truth isolation tests.
+
+## Parallel Development Strategy
+
+This workstream can start immediately.
+
+Workstream 2 consumes `ScenarioContext` fixtures and does not need to wait for the final simulation engine.
+
+---
+
+# 5. Workstream 2 — Sensors, Microcontroller, Acquisition, and Signal Processing
+
+## Owner
+
+**Team Member 2**
+
+## Role Title
+
+**Sensor, Embedded, and Acquisition Engineer**
+
+## Mission
+
+Own the complete system input path for both Simulation Mode and Hardware-in-the-Loop Mode, from sensor-source data or microcontroller packets through validated and normalized `SensorObservation` output.
+
+The microcontroller is a **core project component**, not a future extension.
+
+## Core Responsibilities
+
+### 5.1 UWB Radar Processing
+
 Implement or maintain processing related to:
+
 - respiration evidence;
 - heartbeat evidence;
 - periodicity;
@@ -162,128 +269,240 @@ Implement or maintain processing related to:
 - burial-depth effects;
 - distance falloff;
 - weak vital-sign behavior.
-5.2 Thermal Processing
+
+### 5.2 Thermal Processing
+
 Implement or maintain:
+
 - thermal evidence;
 - thermal contrast;
 - environmental effects;
 - occlusion behavior;
 - normalization.
-5.3 Acoustic Processing
+
+### 5.3 Acoustic Processing
+
 Implement or maintain:
+
 - acoustic filtering;
 - envelope extraction;
 - human-related sound evidence;
 - periodicity;
-- noise handling.
-5.4 Signal Preprocessing
+- environmental noise handling.
+
+### 5.4 Simulation Sensor Path
+
+Using `ScenarioContext` and probe state, produce controlled simulated sensing observations that represent:
+
+- normal operation;
+- noise;
+- attenuation;
+- occlusion;
+- weak vital signs;
+- distance falloff;
+- sensor degradation;
+- sensor dropout.
+
+### 5.5 Signal Preprocessing
+
 Own:
+
 - filtering;
 - normalization;
+- baseline removal where required;
 - feature extraction;
 - validity checks;
-- missing-value handling at acquisition level.
-5.5 Sensor Availability
-Determine whether a sensor is available.
-5.6 Microcontroller Firmware / Acquisition
-Own the microcontroller integration layer, including:
-- sensor acquisition;
+- missing-value handling at acquisition level;
+- initial sensor-availability handling.
+
+### 5.6 Microcontroller Firmware / Acquisition
+
+Own the microcontroller integration layer including:
+
+- sensor or emulated-sensor acquisition;
+- sampling;
+- timestamp handling;
 - packet construction;
 - sequence numbering;
 - device-state reporting;
 - communication status.
-5.7 Communication Protocol
-Implement:
+
+### 5.7 Communication Protocol
+
+Implement and maintain:
+
 - Serial / USB Serial communication;
+- documented packet format;
 - packet parsing;
 - packet validation;
 - connection monitoring;
 - packet-loss detection;
-- malformed-packet handling.
-5.8 Common Sensor Observation Adapter
-Convert both hardware and simulated readings into the shared:
-SensorObservation
-contract.
-Expected Core Modules
+- delayed/duplicate packet handling;
+- malformed-packet handling;
+- reconnect behavior.
+
+### 5.8 Common Observation Adapter
+
+Convert both acquisition paths into the same shared contract:
+
+```text
+Simulation Input ─┐
+                  ├─→ SensorObservation
+HardwarePacket ───┘
+```
+
+No downstream module shall require a separate implementation for simulation and hardware data.
+
+### 5.9 Hardware Status Telemetry
+
+Expose:
+
+- connection state;
+- device ID;
+- port where applicable;
+- packet rate;
+- packet-loss rate;
+- sensor availability;
+- device diagnostics where available.
+
+## Expected Core Modules
+
 Examples:
+
+```text
 signalProcessingManager
+sensorObservationAdapter
 embedded/firmware
 embedded/protocol
 embedded/acquisition
-sensorObservationAdapter
-Inputs
-Simulation Mode:
-Scenario + Probe State
-HIL Mode:
-Microcontroller Packets
-Outputs
-Standardized sensor observations containing:
-- radar evidence;
-- thermal evidence;
-- acoustic evidence;
-- availability;
-- initial quality indicators;
-- timestamps;
-- probe position;
-- hardware status.
-Main Deliverables
-- three sensor-processing pipelines;
-- acquisition protocol;
-- microcontroller communication;
+hardwareStatusManager
+```
+
+## Inputs
+
+### Simulation Mode
+
+```text
+ScenarioContext + Probe State
+```
+
+### Hardware-in-the-Loop Mode
+
+```text
+Physical / Emulated Sensors
+        ↓
+Microcontroller
+        ↓
+HardwarePacket
+```
+
+## Outputs
+
+- `HardwarePacket`;
+- `SensorObservation`;
+- `HardwareStatus`;
+- sensor diagnostics.
+
+## Main Deliverables
+
+- UWB processing path;
+- thermal processing path;
+- acoustic processing path;
+- microcontroller firmware/acquisition path;
+- communication protocol;
+- packet schema and validator;
 - HIL adapter;
-- packet schema;
-- packet validator;
-- sensor-status telemetry;
-- sensor test fixtures.
-Testing Responsibilities
+- common `SensorObservation` adapter;
+- hardware-status telemetry;
+- sensor/HIL fixtures.
+
+## Testing Responsibilities
+
 - radar-processing tests;
 - thermal-processing tests;
 - acoustic-processing tests;
 - sensor-degradation tests;
+- normalization tests;
 - serial packet tests;
 - malformed-packet tests;
 - packet-loss tests;
+- delayed/duplicate packet tests;
 - disconnect/reconnect tests;
 - HIL smoke tests.
-Parallel Development Strategy
-The workstream begins using:
-- simulated sensor values;
+
+## Parallel Development Strategy
+
+This workstream starts using:
+
+- `ScenarioContext` fixtures;
+- simulated sensor inputs;
 - protocol fixtures;
 - emulated serial packets.
-Physical sensing hardware is not required for initial development.
-6. Workstream 3 — Adaptive Fusion and Reliability Intelligence
-Owner
-Team Member 3
-Role Title
-Multi-Sensor Fusion and Reliability Engineer
-Mission
-Own the system intelligence responsible for deciding how much each sensor should influence the final evidence under changing sensing conditions.
-Core Responsibilities
-6.1 Sensor Health
+
+Physical sensors do not need to be available on day one for implementation to begin, but the microcontroller/HIL path remains a required final deliverable.
+
+---
+
+# 6. Workstream 3 — HAIF Fusion and Localization
+
+## Owner
+
+**Team Member 3**
+
+## Role Title
+
+**Multi-Sensor Fusion and Localization Engineer**
+
+## Mission
+
+Own the reliability-aware fusion pipeline and the conversion of fused evidence into spatial victim-location estimates.
+
+This workstream contains two tightly connected scientific responsibilities:
+
+1. **HAIF / adaptive multi-sensor fusion**
+2. **Evidence-based localization**
+
+## Core Responsibilities
+
+### 6.1 Sensor Health
+
 Estimate sensor operational condition independently from current measurement quality.
-6.2 Measurement Quality
+
+### 6.2 Measurement Quality
+
 Estimate observation-specific quality.
-A sensor may be:
-Healthy sensor
-+
-Poor measurement
-and the system must preserve this distinction.
-6.3 Robust Statistical Processing
-Maintain methods including:
+
+The system shall preserve the distinction:
+
+```text
+Healthy Sensor + Poor Measurement
+```
+
+### 6.3 Robust Statistical Processing
+
+Maintain approved methods such as:
+
 - median;
 - MAD;
 - robust scaling;
 - Cauchy weighting where applicable.
-6.4 Sensor Agreement
+
+### 6.4 Sensor Agreement
+
 Estimate agreement among:
+
 - radar;
 - thermal;
 - acoustic evidence.
-6.5 Adaptive Weighting
+
+### 6.5 Adaptive Weighting
+
 Calculate dynamic modality weights.
-6.6 HAIF
-Own the HAIF implementation and maintenance.
-The HAIF pipeline includes concepts such as:
+
+### 6.6 HAIF
+
+Own the HAIF implementation and maintenance including concepts such as:
+
 - availability;
 - health;
 - quality;
@@ -294,45 +513,102 @@ The HAIF pipeline includes concepts such as:
 - one-sided anomaly handling;
 - quality-gated conflict;
 - adaptive modality influence.
-6.7 Fusion Score
-Generate fused victim evidence.
-6.8 Fusion Confidence
-Calculate confidence using approved system factors.
-6.9 Fusion Explainability
+
+### 6.7 Fusion Score and Confidence
+
+Generate:
+
+- fusion score;
+- confidence;
+- modality weights;
+- reliability diagnostics;
+- sensor agreement;
+- effective support.
+
+### 6.8 Fusion Explainability
+
 Expose:
+
 - weights;
 - quality;
 - health;
 - agreement;
 - conflict;
 - innovation;
-- effective support.
-Expected Core Modules
+- effective support;
+- approved diagnostics.
+
+### 6.9 Evidence Map
+
+Maintain spatial evidence accumulation using approved evidence-map logic.
+
+### 6.10 Spatial Update and Decay
+
+Implement:
+
+- Gaussian spatial update;
+- evidence decay where required;
+- reliability masking;
+- evidence-peak search.
+
+### 6.11 Localization
+
+Estimate victim coordinates using the approved localization method, including weighted-centroid logic where applicable.
+
+### 6.12 Localization Confidence and Acceptance
+
+Produce:
+
+- localization confidence;
+- evidence peak;
+- accepted/rejected status;
+- explicit rejection reason when evidence is insufficient or unstable.
+
+## Expected Core Modules
+
 Examples:
+
+```text
 calculateAdaptiveWeights
 adaptiveFusion
 confidenceEstimation
 HAIF
-Inputs
+updateEvidenceMap
+localizationManager
+readHAIFLocalizationQualitySupport
+```
+
+## Inputs
+
+```text
 SensorObservation
-Outputs
-FusionOutput
-including:
-- fusion score;
-- confidence;
-- modality weights;
-- reliability information;
-- sensor agreement;
-- effective support.
-Main Deliverables
+Probe Position / Observation Context
+```
+
+## Outputs
+
+- `FusionOutput`;
+- `LocalizationOutput`;
+- fusion diagnostics;
+- localization diagnostics.
+
+## Main Deliverables
+
 - baseline fusion;
 - robust fusion baseline;
 - HAIF;
 - confidence estimation;
 - reliability diagnostics;
-- fusion visual telemetry;
-- robustness experiments.
-Testing Responsibilities
+- Evidence Map;
+- localization pipeline;
+- localization acceptance policy;
+- robustness experiments;
+- fusion/localization telemetry.
+
+## Testing Responsibilities
+
+### Fusion / HAIF
+
 - clean-condition tests;
 - attenuation tests;
 - sensor-dropout tests;
@@ -341,239 +617,197 @@ Testing Responsibilities
 - weight-response tests;
 - regression tests;
 - baseline-comparison tests.
-Research Responsibility
-This owner is the primary technical maintainer of the HAIF research contribution.
-However, experimental review shall involve at least one second team member.
-Parallel Development Strategy
+
+### Localization
+
+- synthetic-location tests;
+- spatial-evidence tests;
+- localization-stability tests;
+- accepted/rejected localization tests;
+- multiple-peak tests;
+- regression tests.
+
+## Research Responsibility
+
+This owner is the primary technical maintainer of the HAIF and quality-aware localization research contribution.
+
+Experimental review shall involve at least one additional team member. Protected calibration, development, fresh-validation, and locked evaluation rules must be respected.
+
+## Parallel Development Strategy
+
 This workstream begins using:
-interfaces/fixtures/mock_sensor_observation.*
+
+```text
+interfaces/fixtures/sensor_observation.json
+```
+
 without waiting for Workstream 2 to finish.
-7. Workstream 4 — Localization, Victim Tracking, and Rescue Decision
-Owner
-Team Member 4
-Role Title
-Localization and Rescue Decision Engineer
-Mission
-Own the conversion of fused evidence into spatial victim estimates, persistent victim tracks, vitality assessment, and rescue priority.
-This workstream is intentionally not combined with dashboard development because localization is one of the most technically demanding modules in the project.
-Core Responsibilities
-7.1 Evidence Map
-Maintain spatial evidence accumulation.
-7.2 Gaussian Spatial Update
-Apply spatial kernels around observations.
-7.3 Evidence Decay
-Maintain time-dependent evidence behavior where required.
-7.4 Reliability Masking
-Prevent unreliable evidence from dominating the map.
-7.5 Evidence Peak Search
-Identify probable victim regions.
-7.6 Localization
-Estimate victim coordinates using the approved method, including weighted centroid logic where applicable.
-7.7 Localization Confidence
-Estimate confidence associated with the location result.
-7.8 Localization Acceptance
-Reject unstable or insufficient localization output.
-7.9 Victim Candidate Creation
-Create candidates from accumulated evidence.
-7.10 Candidate Association
-Associate observations with existing tracks.
-7.11 Candidate Merge
-Merge duplicate victim hypotheses.
-7.12 Victim Track Management
+
+---
+
+# 7. Workstream 4 — Victim Tracking, AI Intelligence, Vitality, and Rescue Decision
+
+## Owner
+
+**Team Member 4**
+
+## Role Title
+
+**Victim Intelligence and AI Decision Engineer**
+
+## Mission
+
+Own the persistent victim-intelligence layer after localization: candidate/track management, AI candidate validation, uncertainty-aware decisions, vitality estimation, and rescue prioritization.
+
+The AI layer is a decision-support layer **above** the deterministic sensing/fusion/localization pipeline. It does not replace HAIF or localization.
+
+## Core Responsibilities
+
+### 7.1 Victim Candidate Creation
+
+Create operational victim candidates from accepted localization evidence.
+
+### 7.2 Candidate Association and Merge
+
+Implement:
+
+- association to existing tracks;
+- duplicate handling;
+- track merge logic;
+- new-track creation.
+
+### 7.3 Victim Track Management
+
 Maintain:
+
+- victim/track ID;
+- estimated location;
+- localization confidence;
 - detection count;
 - independent views;
 - temporal stability;
 - location history;
-- existence probability.
-7.13 Vitality Index
-Calculate the approved Vitality Index using system evidence.
-7.14 Rescue Priority
-Generate rescue priority for confirmed victims.
-7.15 Multi-Victim Ranking
-Maintain ordered rescue recommendations.
-Expected Core Modules
-Examples:
-updateEvidenceMap
-localizationManager
-updateVictimDatabase
-vitalityManager
-decisionEngine
-Inputs
-- FusionOutput;
-- probe position;
-- observation history;
-- AI validation state where required for final decision.
-Outputs
-- estimated victim locations;
-- localization confidence;
-- victim tracks;
-- vitality index;
-- rescue priority;
-- recommendation metadata.
-Main Deliverables
-- Evidence Map;
-- localization pipeline;
-- candidate association;
-- tracking;
-- vitality engine;
-- rescue-priority logic;
-- route/recommendation metadata;
-- localization evaluation.
-Testing Responsibilities
-- synthetic-location tests;
-- spatial-evidence tests;
-- localization-stability tests;
-- candidate-association tests;
-- duplicate-merge tests;
-- multi-victim tests;
-- vitality tests;
-- rescue-ranking tests.
-Parallel Development Strategy
-This workstream begins using:
-interfaces/fixtures/mock_fusion_output.*
-without waiting for HAIF integration.
-8. Workstream 5 — AI Intelligence and Operational Dashboard
-Owner
-Team Member 5
-Role Title
-AI and Product Intelligence Engineer
-Mission
-Own the learned candidate-validation layer and the operator-facing product layer.
-Because this workstream contains both AI and dashboard responsibilities, supporting feature generation and scientific signals are produced by other module owners rather than duplicated here.
-Part A — AI Responsibilities
-8.1 Candidate Dataset Consumption
-Consume the approved candidate dataset generated by the project.
-8.2 Candidate Classification
+- existence probability;
+- status.
+
+### 7.4 Candidate Feature Record
+
+Assemble the approved AI candidate feature schema from upstream scientific features while enforcing the no-oracle policy.
+
+### 7.5 Candidate Classification
+
 Train and integrate classification for:
+
+```text
 TRUE_TRACK
 HARD_NEGATIVE
+```
+
 while excluding:
+
+```text
 AMBIGUOUS_IGNORE
-from primary supervised training.
-8.3 AI Data Integrity
+```
+
+from the primary supervised training target.
+
+### 7.6 AI Data Integrity
+
 Verify:
+
 - split integrity;
 - missingness;
 - leaked columns;
 - oracle leakage;
-- duplicate mission contamination.
-8.4 Model Training
-Implement reproducible model training.
-8.5 Probability Calibration
-Calibrate classifier probabilities.
-8.6 Uncertainty Estimation
+- duplicate-mission contamination;
+- feature-version consistency.
+
+### 7.7 Model Training
+
+Implement reproducible training and model-version management.
+
+### 7.8 Probability Calibration
+
+Calibrate classifier probabilities using the approved development protocol.
+
+### 7.9 Uncertainty Estimation
+
 Estimate model uncertainty.
-8.7 Abstention
+
+### 7.10 Abstention
+
 Implement:
+
+```text
 ACCEPT_TRUE_TRACK
 REJECT_HARD_NEGATIVE
 ABSTAIN
-8.8 Explainability
-Produce operator-facing explanations.
-8.9 Auditability
-Track:
+```
+
+### 7.11 Explainability and Auditability
+
+Record and expose:
+
 - model version;
 - feature version;
 - probability;
 - uncertainty;
-- threshold;
+- decision;
 - abstention;
-- timestamp.
-8.10 AI Evaluation
-Evaluate:
-- precision;
-- recall;
-- F1;
-- confusion matrix;
-- false positives;
-- false negatives;
-- calibration;
-- abstention;
-- selective performance.
-Part B — Dashboard Responsibilities
-8.11 Frontend Stack
-Own implementation using:
-React
-TypeScript
-Vite
-8.12 Mission Status
-Display:
-- mission ID;
-- mode;
-- status;
-- elapsed time;
-- coverage;
-- reliability;
-- AI status;
-- victim count.
-8.13 Operational Map
-Display:
-- structure;
-- probe;
-- path;
-- coverage;
-- evidence heatmap;
-- victim locations;
-- selected victim;
-- rescue route.
-8.14 Victim Intelligence
-Display:
-- victim identity;
-- location;
-- localization confidence;
-- AI probability;
-- uncertainty;
-- vitality;
-- priority.
-8.15 AI Assessment
-Display:
-- classification;
-- probability;
-- uncertainty;
-- abstention;
+- threshold/version metadata;
 - supporting factors;
-- risk factors.
-8.16 Fusion Intelligence
-Visualize data supplied by Workstream 3.
-8.17 Sensor Health
-Visualize data supplied by Workstream 2 and Workstream 3.
-8.18 Localization
-Visualize data supplied by Workstream 4.
-8.19 Hardware Status
-Display HIL information supplied by Workstream 2.
-8.20 Timeline
-Display mission events.
-8.21 Evaluation View
-Display research and performance metrics.
-Expected Dashboard Components
+- risk factors;
+- timestamp.
+
+### 7.12 Vitality Index
+
+Calculate the approved Vitality Index using operational evidence.
+
+### 7.13 Rescue Priority
+
+Generate rescue priority for confirmed/evaluated victims.
+
+### 7.14 Multi-Victim Ranking
+
+Maintain an ordered rescue recommendation and associated metadata.
+
+## Expected Core Modules
+
 Examples:
-MissionStatusStrip
-OperationalMap
-MapCanvas
-VictimList
-DecisionWorkspace
-DecisionSummary
-RecommendationCard
-AIExplanation
-DecisionActions
-Timeline
-VictimIntelligence
-FusionIntelligence
-SensorReadings
-HardwareStatus
-EvaluationView
-Inputs
-AI:
-CandidateFeatureRecord
-Dashboard:
-MissionState
-Outputs
-AI:
-AIOutput
-Dashboard:
-operator-facing visualization and interactions.
-Main Deliverables
+
+```text
+updateVictimDatabase
+trackAssociation
+candidateFeatureBuilder
+ai/training
+ai/calibration
+ai/uncertainty
+ai/inference
+vitalityManager
+decisionEngine
+priorityRanking
+```
+
+## Inputs
+
+- `LocalizationOutput`;
+- approved fusion/reliability features;
+- observation history;
+- candidate history.
+
+## Outputs
+
+- `VictimTrack`;
+- `CandidateFeatureRecord`;
+- `AIOutput`;
+- `RescueDecision`;
+- vitality and ranking metadata.
+
+## Main Deliverables
+
+- candidate association;
+- persistent tracking;
+- candidate dataset pipeline;
 - AI training pipeline;
 - trained model artifact;
 - calibration;
@@ -581,109 +815,438 @@ Main Deliverables
 - abstention;
 - explainability;
 - AI evaluation;
-- complete dashboard;
-- dashboard integration;
-- UI tests.
-Testing Responsibilities
-AI:
+- vitality engine;
+- rescue-priority logic;
+- multi-victim ranking.
+
+## Testing Responsibilities
+
+### Tracking
+
+- candidate-association tests;
+- duplicate-merge tests;
+- temporal-stability tests;
+- multi-victim tests;
+- lost/reacquired track tests where applicable.
+
+### AI
+
 - feature-schema tests;
 - leakage tests;
 - split tests;
 - reproducibility tests;
 - calibration tests;
 - inference tests;
-- abstention tests.
-Dashboard:
+- uncertainty tests;
+- abstention tests;
+- sealed-test governance checks.
+
+### Decision
+
+- vitality tests;
+- rescue-ranking tests;
+- priority-consistency tests;
+- uncertain/abstained candidate handling.
+
+## Parallel Development Strategy
+
+This workstream starts using:
+
+```text
+interfaces/fixtures/localization_output.json
+interfaces/fixtures/victim_track.json
+interfaces/fixtures/candidate_features.json
+```
+
+without waiting for Workstream 3 to finish.
+
+---
+
+# 8. Workstream 5 — Backend, Operational Dashboard, and System Integration
+
+## Owner
+
+**Team Member 5**
+
+## Role Title
+
+**Full-Stack Platform and Integration Engineer**
+
+## Mission
+
+Own the product-facing software layer that integrates MATLAB, Python AI outputs, hardware status, mission telemetry, REST/API services, and the operator dashboard.
+
+This workstream does **not** reimplement scientific algorithms. It exposes validated outputs through stable APIs and user interfaces.
+
+## Part A — Backend and Integration Responsibilities
+
+### 8.1 Backend Service
+
+Own the backend application and service boundaries, including where applicable:
+
+- FastAPI application;
+- configuration;
+- API routing;
+- CORS;
+- structured error handling;
+- telemetry ingestion/consumption;
+- mission-state assembly;
+- result/evaluation release rules;
+- logging.
+
+### 8.2 MATLAB Integration
+
+Integrate the MATLAB mission pipeline with the backend through the approved telemetry/result contracts.
+
+### 8.3 Python AI Integration
+
+Expose Workstream 4 AI outputs through the operational state without duplicating the AI model internally in the frontend.
+
+### 8.4 Hardware Status Integration
+
+Consume `HardwareStatus` from Workstream 2 and expose it to the dashboard.
+
+### 8.5 MissionState Assembly
+
+Build the unified dashboard-facing `MissionState` from approved operational contracts.
+
+### 8.6 API Contract
+
+Maintain versioned API responses and controlled failure behavior.
+
+## Part B — Dashboard Responsibilities
+
+### 8.7 Frontend Stack
+
+Own implementation using:
+
+```text
+React
+TypeScript
+Vite
+```
+
+### 8.8 Mission Status
+
+Display:
+
+- mission ID;
+- operating mode;
+- mission status;
+- elapsed time;
+- coverage;
+- system reliability;
+- AI state;
+- victim count.
+
+### 8.9 Operational Map
+
+Display:
+
+- structure/environment;
+- probe;
+- path;
+- coverage;
+- evidence visualization where approved;
+- victim locations;
+- selected victim;
+- rescue route/recommendation metadata.
+
+### 8.10 Victim Intelligence
+
+Display:
+
+- victim/track identity;
+- estimated location;
+- localization confidence;
+- AI probability;
+- uncertainty;
+- AI decision/abstention;
+- vitality;
+- rescue priority.
+
+### 8.11 Fusion Intelligence
+
+Visualize approved Workstream 3 data:
+
+- fusion score;
+- confidence;
+- modality weights;
+- health/quality;
+- effective support;
+- agreement/conflict diagnostics where approved.
+
+### 8.12 Sensor and Hardware Status
+
+Display:
+
+- radar/thermal/acoustic status;
+- sensor health/quality where available;
+- microcontroller connection state;
+- packet rate;
+- packet-loss rate;
+- hardware warnings.
+
+### 8.13 AI Assessment
+
+Display:
+
+- classification;
+- probability;
+- uncertainty;
+- abstention;
+- supporting factors;
+- risk factors;
+- model version where appropriate.
+
+### 8.14 Timeline and Evaluation View
+
+Display mission events and post-mission evaluation without leaking evaluation-only ground truth during an active mission.
+
+## Expected Core Modules
+
+Examples:
+
+```text
+backend/app/main.py
+backend/app/api/*
+backend/app/telemetry/*
+backend/app/integration/*
+dashboard/src/*
+MissionStatusStrip
+OperationalMap
+VictimList
+DecisionWorkspace
+DecisionSummary
+RecommendationCard
+AIExplanation
+Timeline
+VictimIntelligence
+FusionIntelligence
+SensorReadings
+HardwareStatus
+EvaluationView
+```
+
+## Inputs
+
+- `HardwareStatus`;
+- `FusionOutput`;
+- `LocalizationOutput`;
+- `VictimTrack`;
+- `AIOutput`;
+- `RescueDecision`;
+- `MissionEvent`;
+- mission telemetry/results.
+
+## Outputs
+
+- `MissionState`;
+- versioned REST/API responses;
+- operator-facing visualization and interactions;
+- integration logs.
+
+## Main Deliverables
+
+- backend service;
+- telemetry bridge;
+- integration adapters;
+- unified mission state;
+- operational API;
+- complete dashboard;
+- dashboard integration;
+- error/loading states;
+- hardware/HIL visualization;
+- backend tests;
+- frontend tests;
+- integration tests.
+
+## Testing Responsibilities
+
+### Backend / Integration
+
+- API tests;
+- telemetry parsing tests;
+- schema validation;
+- ground-truth safety-boundary tests;
+- mission-state assembly tests;
+- MATLAB/backend integration tests;
+- AI/backend integration tests;
+- HIL/backend integration tests;
+- controlled-error tests.
+
+### Dashboard
+
 - component tests;
 - payload parsing;
 - victim selection;
 - map synchronization;
 - error-state rendering;
 - HIL status rendering;
-- AI state rendering.
-Workload Control
-If this workstream becomes overloaded, secondary dashboard visualization tasks may be temporarily supported by another member.
-The owner remains responsible for final integration and consistency.
-9. Cross-Workstream AI Feature Ownership
-AI feature generation is a shared responsibility.
-The AI owner does not recreate scientific features already owned by other modules.
-Feature ownership is divided as follows:
-Feature Family	Primary Owner
-Sensor signal features	Workstream 2
-Sensor health / quality	Workstream 3
-Fusion weights / confidence	Workstream 3
-Localization stability	Workstream 4
-Candidate temporal features	Workstream 4
-Candidate dataset pipeline	Workstream 5
-Model preprocessing	Workstream 5
-Calibration / uncertainty	Workstream 5
+- AI state rendering;
+- mission lifecycle rendering.
 
+## Parallel Development Strategy
 
-This prevents duplication and improves traceability.
-10. Cross-Workstream Integration Responsibilities
+This workstream starts using:
+
+```text
+interfaces/fixtures/mission_state.json
+interfaces/fixtures/hardware_status.json
+interfaces/fixtures/ai_output.json
+interfaces/fixtures/rescue_decision.json
+```
+
+without waiting for live MATLAB, AI, or hardware integration.
+
+---
+
+# 9. Cross-Workstream AI Feature Ownership
+
+AI feature generation is a shared scientific responsibility, but the AI schema and model pipeline are owned by Workstream 4.
+
+| Feature Family | Primary Owner |
+|---|---|
+| Sensor signal features | Workstream 2 |
+| Sensor availability | Workstream 2 |
+| Sensor health / measurement quality | Workstream 3 |
+| Fusion weights / confidence | Workstream 3 |
+| Agreement / conflict / effective support | Workstream 3 |
+| Localization confidence / spatial stability | Workstream 3 |
+| Candidate temporal features | Workstream 4 |
+| Candidate dataset assembly | Workstream 4 |
+| Model preprocessing | Workstream 4 |
+| Calibration / uncertainty / abstention | Workstream 4 |
+| Operational API exposure | Workstream 5 |
+
+This prevents duplicate scientific logic and improves traceability.
+
+---
+
+# 10. Cross-Workstream Integration Responsibilities
+
 Integration is a team responsibility.
+
 No workstream may state:
-"My module works, so my work is complete."
-A module is complete only when it works through its approved interface with the rest of the system.
-11. Reviewer Matrix
-Every primary owner has a designated peer reviewer.
-Recommended review rotation:
-Owner	Primary Reviewer
-Workstream 1	Workstream 2
-Workstream 2	Workstream 3
-Workstream 3	Workstream 4
-Workstream 4	Workstream 5
-Workstream 5	Workstream 1
 
+> "My module works, so my work is complete."
 
-A second reviewer may be requested for high-risk changes.
-12. Technical Lead Role
-One team member may act as:
+A module is complete only when it:
+
+1. works locally;
+2. respects its approved contract;
+3. passes required tests;
+4. integrates with at least the approved fixture/consumer path;
+5. does not break protected regression behavior.
+
+Workstream 5 owns the platform integration implementation, while every workstream remains responsible for making its module integrable.
+
+---
+
+# 11. Reviewer Matrix
+
+Recommended primary reviewer rotation:
+
+| Owner | Primary Reviewer |
+|---|---|
+| Workstream 1 | Workstream 2 |
+| Workstream 2 | Workstream 3 |
+| Workstream 3 | Workstream 4 |
+| Workstream 4 | Workstream 5 |
+| Workstream 5 | Workstream 1 |
+
+A second reviewer may be requested for high-risk research, hardware, AI, or architectural changes.
+
+---
+
+# 12. Technical Lead / Delivery Coordinator
+
+One team member may additionally act as:
+
+```text
 Technical Lead / Delivery Coordinator
-This role is additional to their technical workstream.
-The Technical Lead is responsible for:
+```
+
+Responsibilities:
+
 - architecture consistency;
 - sprint-goal alignment;
 - dependency resolution;
 - integration planning;
-- interface-change approval;
+- interface-change control;
 - risk escalation;
-- ensuring tests are run;
-- and coordinating final system builds.
-The Technical Lead shall not act as the sole decision-maker for all technical work.
-Major architectural changes should be reviewed by the team.
-13. Parallel Development Model
-All five members begin work in parallel.
-Workstream 1
-Uses the real simulation engine.
-Workstream 2
-Uses simulated sensor conditions and protocol fixtures.
-Workstream 3
-Uses mock SensorObservation.
-Workstream 4
-Uses mock FusionOutput.
-Workstream 5
-Uses:
-- mock CandidateFeatureRecord;
-- mock MissionState.
+- ensuring required tests are run;
+- coordinating integrated builds;
+- coordinating Sprint Review evidence.
+
+The Technical Lead shall not be the sole decision-maker for major technical changes.
+
+---
+
+# 13. Parallel Development Model
+
+All five members begin in parallel.
+
+### Workstream 1
+Uses the real or developing simulation engine.
+
+### Workstream 2
+Uses `ScenarioContext` plus simulated conditions and protocol fixtures.
+
+### Workstream 3
+Uses mock `SensorObservation`.
+
+### Workstream 4
+Uses mock `LocalizationOutput`, `VictimTrack`, and candidate fixtures.
+
+### Workstream 5
+Uses mock `MissionState`, `AIOutput`, `HardwareStatus`, and rescue-decision fixtures.
+
 Therefore:
+
+```text
 No team member waits for another member to finish the full module.
-14. Shared Fixtures
+```
+
+---
+
+# 14. Shared Fixtures
+
 The repository shall contain:
+
+```text
 interfaces/fixtures/
+```
+
 with representative test data.
-Recommended fixtures:
-mock_sensor_observation.json
-mock_fusion_output.json
-mock_candidate_features.csv
-mock_ai_output.json
-mock_victim_track.json
-mock_mission_state.json
-mock_hardware_packet.json
+
+Minimum initial fixtures:
+
+```text
+scenario_context.json
+hardware_packet.json
+sensor_observation.json
+fusion_output.json
+localization_output.json
+victim_track.json
+candidate_features.json
+ai_output.json
+rescue_decision.json
+hardware_status.json
+mission_state.json
+```
+
 Every fixture shall conform to the same schema used by production modules.
-15. Shared Interface Contracts
-The five workstreams are connected through these major contracts:
+
+---
+
+# 15. Shared Interface Contracts
+
+Major shared contracts:
+
+```text
 ScenarioContext
+HardwarePacket
 SensorObservation
 FusionOutput
 LocalizationOutput
@@ -693,39 +1256,66 @@ AIOutput
 RescueDecision
 HardwareStatus
 MissionState
-Detailed field definitions will be created in:
+MissionEvent
+```
+
+Detailed field definitions are maintained in:
+
+```text
 05_Interface_Contracts.md
-16. Definition of Done — All Workstreams
-A task or feature is not considered Done merely because code has been written.
+```
+
+---
+
+# 16. Definition of Done — All Workstreams
+
 A work item is Done only when applicable criteria are satisfied:
+
 1. implementation completed;
 2. local tests pass;
 3. interface contract respected;
 4. code committed;
 5. pull request created;
 6. peer review completed;
-7. integration tests pass;
-8. regression tests remain green;
+7. integration tests pass where applicable;
+8. protected regression remains green;
 9. documentation updated;
 10. Jira issue updated;
 11. acceptance criteria demonstrated.
-17. Git Workflow
-The team shall not develop directly on main for normal feature work.
+
+---
+
+# 17. Git Workflow
+
+Normal feature work shall not be performed directly on `main`.
+
 Recommended flow:
+
+```text
 main
   ↑
 develop
   ↑
 feature/*
+```
+
 Examples:
+
+```text
 feature/scenario-engine
-feature/radar-processing
-feature/haif-fusion
-feature/evidence-map
-feature/ai-calibration
-feature/dashboard-map
 feature/microcontroller-protocol
+feature/sensor-observation-adapter
+feature/haif-fusion
+feature/localization
+feature/victim-tracking
+feature/ai-calibration
+feature/backend-telemetry
+feature/dashboard-map
+```
+
 Typical workflow:
+
+```text
 Jira Issue
     ↓
 Feature Branch
@@ -739,73 +1329,111 @@ Pull Request
 Peer Review
     ↓
 Integration
-18. Commit Convention
-Recommended commit examples:
+```
+
+---
+
+# 18. Commit Convention
+
+Examples:
+
+```text
 feat: add radar attenuation model
+feat: implement microcontroller packet validator
 feat: implement candidate abstention
 fix: correct localization centroid calculation
 test: add sensor dropout regression
 docs: update sensor observation contract
 refactor: isolate acquisition adapter
+```
+
 Commits should describe meaningful changes.
-19. Jira Ownership
+
+---
+
+# 19. Jira Ownership
+
 Each implementation issue shall contain at least:
+
 - Summary;
 - Description;
 - Requirement references;
 - Assignee;
 - Reviewer;
 - Priority;
-- Acceptance criteria;
+- Acceptance Criteria;
 - Dependencies;
 - Sprint;
 - Definition of Done.
+
 Example:
-Story:
-Implement Hardware Packet Validation
 
-Owner:
-Workstream 2
-
-Reviewer:
-Workstream 3
-
-Requirements:
-FR-019
-FR-020
-NFR-019
-
+```text
+Story: Implement Hardware Packet Validation
+Owner: Workstream 2
+Reviewer: Workstream 3
+Requirements: FR-019, FR-020
 Acceptance:
 - malformed packets rejected
 - missing sequence detected
 - valid packets converted to SensorObservation
 - tests pass
-20. Recommended Jira Epics
-Initial epics should include:
-EPIC 1 — Project Foundation
-EPIC 2 — Simulation and Mission Engine
-EPIC 3 — Sensor and Embedded Systems
-EPIC 4 — HAIF and Adaptive Fusion
-EPIC 5 — Localization and Victim Tracking
-EPIC 6 — AI Decision Intelligence
-EPIC 7 — Vitality and Rescue Decision
-EPIC 8 — Operational Dashboard
-EPIC 9 — System Integration
+```
+
+---
+
+# 20. Recommended Jira Epics
+
+```text
+EPIC 1  — Project Foundation
+EPIC 2  — Simulation and Mission Engine
+EPIC 3  — Sensors, Microcontroller, and Acquisition
+EPIC 4  — HAIF and Adaptive Fusion
+EPIC 5  — Localization
+EPIC 6  — Victim Tracking and AI Intelligence
+EPIC 7  — Vitality and Rescue Decision
+EPIC 8  — Backend and Operational Dashboard
+EPIC 9  — System Integration
 EPIC 10 — Testing and Validation
 EPIC 11 — Final Demonstration and Documentation
-21. Sprint Structure
+```
+
+---
+
+# 21. Sprint Structure
+
 Recommended sprint duration:
+
+```text
 1–2 weeks
-Each sprint shall have one shared system-level goal.
-Bad sprint goal:
-Everyone completes their assigned tasks.
-Preferred sprint goal:
-The integrated system can propagate one complete sensor observation
-from acquisition through fusion and expose the result through the
-shared interface.
-22. Integration Cadence
+```
+
+The project shall use a short **Sprint 0** before feature implementation.
+
+Sprint 0 focuses on:
+
+- repository readiness;
+- contract freeze;
+- fixtures;
+- toolchain verification;
+- basic workstream skeletons;
+- first interface smoke tests.
+
+Every later sprint shall have one shared system-level goal.
+
+Preferred Sprint Goal example:
+
+> The integrated system can propagate one valid observation through acquisition, fusion, and localization using the approved contracts.
+
+---
+
+# 22. Integration Cadence
+
 At least one integration checkpoint shall occur during each sprint.
+
 Recommended cadence:
+
+```text
 Development
     ↓
 Mid-Sprint Integration Check
@@ -813,190 +1441,336 @@ Mid-Sprint Integration Check
 Development / Fixes
     ↓
 End-of-Sprint Integrated Build
-Integration issues shall be treated as project work, not as one member's private problem.
-23. Suggested Early Sprint Allocation
-Sprint 1 — Interface-Ready Foundations
-Workstream 1
-- scenario configuration;
+```
+
+Integration issues are project work, not one member's private problem.
+
+---
+
+# 23. Suggested Sprint 0 Allocation
+
+## Workstream 1
+
+- scenario configuration skeleton;
 - mission skeleton;
 - probe fixture;
-- ScenarioContext mock.
-Workstream 2
+- `ScenarioContext` fixture.
+
+## Workstream 2
+
 - sensor input schemas;
-- microcontroller packet draft;
-- radar / thermal / acoustic processing skeleton;
-- acquisition mock.
-Workstream 3
-- SensorObservation consumer;
-- baseline fusion;
-- HAIF module skeleton;
-- FusionOutput fixture.
-Workstream 4
-- evidence-map skeleton;
-- localization interface;
-- VictimTrack fixture;
-- localization tests.
-Workstream 5
-- AI project structure;
-- CandidateFeatureRecord loader;
+- `HardwarePacket` v1.0 draft;
+- microcontroller protocol draft;
+- radar/thermal/acoustic processing entry points;
+- acquisition mock;
+- `SensorObservation` fixture.
+
+## Workstream 3
+
+- `SensorObservation` consumer;
+- fusion entry point;
+- HAIF regression entry point;
+- localization entry point;
+- `FusionOutput` and `LocalizationOutput` fixtures.
+
+## Workstream 4
+
+- victim-track structure;
+- candidate-feature loader/schema;
+- AI project skeleton;
+- vitality/decision entry points;
+- `VictimTrack`, `CandidateFeatureRecord`, `AIOutput`, and `RescueDecision` fixtures.
+
+## Workstream 5
+
+- backend project skeleton;
 - dashboard project skeleton;
-- MissionState mock renderer.
-Sprint 1 Shared Goal
-All five workstreams can execute independently against agreed mock interfaces.
-24. Suggested Integration Sprint
-A later integration sprint should target:
-Simulation
+- `MissionState` mock renderer;
+- integration directory structure;
+- basic API/telemetry smoke path;
+- CI/repository integration support.
+
+## Sprint 0 Shared Goal
+
+```text
+All five workstreams can execute independently against agreed v1.0
+contracts and fixtures, and the team can demonstrate at least one
+producer-consumer interface without unfinished upstream code.
+```
+
+---
+
+# 24. Required End-to-End Product Paths
+
+The project is not complete unless both paths are represented.
+
+## 24.1 Simulation Path
+
+```text
+Scenario / Probe
     ↓
-Sensors
+Simulated Sensors
     ↓
-Fusion
+SensorObservation
+    ↓
+HAIF Fusion
     ↓
 Localization
     ↓
-Victim Track
+Victim Tracking
     ↓
-AI
+AI Validation
     ↓
-Vitality
+Vitality / Rescue Decision
     ↓
-Rescue Priority
+Backend
     ↓
 Dashboard
-The HIL path is then connected through the same acquisition interface.
-25. Workstream Dependency Matrix
-Workstream	Main Upstream Dependency	Can Start Without It?
-1 Simulation	None	Yes
-2 Sensors / Embedded	Scenario interface	Yes
-3 Fusion	SensorObservation	Yes, with mock
-4 Localization / Decision	FusionOutput	Yes, with mock
-5 AI / Dashboard	Candidate + MissionState	Yes, with mocks
+```
 
+## 24.2 Hardware-in-the-Loop Path
+
+```text
+Physical / Emulated Sensors
+    ↓
+Microcontroller
+    ↓
+HardwarePacket
+    ↓
+Acquisition / Validation
+    ↓
+SensorObservation
+    ↓
+Same Downstream Pipeline
+    ↓
+Backend
+    ↓
+Dashboard
+```
+
+The system shall converge at `SensorObservation` wherever practical.
+
+---
+
+# 25. Workstream Dependency Matrix
+
+| Workstream | Main Upstream Dependency | Can Start Without Final Upstream? |
+|---|---|---|
+| WS1 Simulation / Mission | None | Yes |
+| WS2 Sensors / Microcontroller | ScenarioContext | Yes, with fixture |
+| WS3 HAIF / Localization | SensorObservation | Yes, with fixture |
+| WS4 Tracking / AI / Decision | LocalizationOutput | Yes, with fixture |
+| WS5 Backend / Dashboard / Integration | Mission-facing outputs | Yes, with fixtures |
 
 Therefore all five workstreams can start in parallel.
-26. Workload Rebalancing Rules
-During sprint planning, the team should review:
+
+---
+
+# 26. Workload Rebalancing Rules
+
+During Sprint Planning, review:
+
 - open issue count;
+- story points / estimated effort;
 - technical risk;
 - blocked tasks;
 - testing burden;
 - bug count;
-- integration burden.
+- integration burden;
+- hardware availability;
+- research/evaluation workload.
+
 If one workstream becomes overloaded:
-- secondary tasks may be reassigned;
-- testing can be shared;
-- dashboard visual components can be delegated;
-- experiment automation can be shared;
-- documentation support can be redistributed.
-Core algorithm ownership should remain stable unless there is a clear reason to change it.
-27. Team Communication
-Recommended recurring communication:
-Short Daily Check-In
+
+- secondary tests may be shared;
+- dashboard visual components may be delegated temporarily;
+- experiment automation may be shared;
+- documentation support may be redistributed;
+- integration debugging may be paired.
+
+Core scientific ownership should remain stable unless there is a clear reason to change it.
+
+---
+
+# 27. Team Communication
+
+## Short Daily Check-In
+
 Each member answers:
-What did I complete?
-What am I doing next?
-What is blocking me?
-Did I change any shared interface?
-Sprint Planning
+
+1. What did I complete?
+2. What am I doing next?
+3. What is blocking me?
+4. Did I change or request a change to any shared interface?
+
+## Sprint Planning
+
 Define:
+
 - Sprint Goal;
-- stories;
-- owners;
+- Stories;
+- Owners;
+- Reviewers;
+- story points / effort;
 - dependencies;
 - risks.
-Integration Review
+
+## Mid-Sprint Integration Review
+
 Review:
+
 - interface mismatches;
 - failed tests;
 - integration blockers;
-- schema changes.
-Sprint Review
+- schema changes;
+- hardware blockers.
+
+## Sprint Review
+
 Demonstrate the integrated increment.
-Retrospective
+
+## Retrospective
+
 Discuss:
+
 - what worked;
 - what did not;
 - what should change next sprint.
-28. Interface Change Policy
+
+---
+
+# 28. Interface Change Policy
+
 Shared interfaces shall not be changed silently.
+
 Any breaking change to:
+
+```text
+HardwarePacket
 SensorObservation
 FusionOutput
 LocalizationOutput
 VictimTrack
+CandidateFeatureRecord
 AIOutput
+RescueDecision
+HardwareStatus
 MissionState
+```
+
 must include:
-1. proposed change;
-2. reason;
-3. affected workstreams;
-4. reviewer approval;
-5. updated schema;
-6. updated fixtures;
-7. updated tests.
-29. Ownership Does Not Mean Isolation
-An owner is responsible for ensuring a module succeeds.
-Ownership does not mean:
-Only this person may understand or edit the module.
-At least one reviewer should understand each critical module.
-This reduces single-person dependency and improves maintainability.
-30. Final Ownership Summary
-Team Member 1
-Simulation and Mission Systems Engineer
+
+1. Jira issue;
+2. proposed change;
+3. rationale;
+4. affected workstreams;
+5. reviewer approval;
+6. schema-version update;
+7. updated fixtures;
+8. updated tests;
+9. integration check.
+
+---
+
+# 29. Ownership Does Not Mean Isolation
+
+An owner is accountable for ensuring a module succeeds.
+
+Ownership does not mean only that person may understand or edit the module.
+
+At least one reviewer shall understand each critical module to reduce single-person dependency and improve maintainability.
+
+---
+
+# 30. Final Ownership Summary
+
+## Team Member 1 — Simulation and Mission Systems Engineer
+
 Owns:
-Simulation
-Scenario Engine
-Probe
-Search Path
-Mission Controller
-Ground Truth Firewall
-Team Member 2
-Sensor and Embedded Systems Engineer
+
+- Simulation;
+- Scenario Engine;
+- Ground Truth Firewall;
+- Probe;
+- Search Path;
+- Coverage;
+- Mission Controller.
+
+## Team Member 2 — Sensor, Embedded, and Acquisition Engineer
+
 Owns:
-UWB
-Thermal
-Acoustic
-Signal Processing
-Microcontroller
-Serial Communication
-Acquisition
-Team Member 3
-Multi-Sensor Fusion and Reliability Engineer
+
+- UWB;
+- Thermal;
+- Acoustic;
+- simulated sensor path;
+- Signal Processing;
+- Microcontroller;
+- Serial/USB Communication;
+- Acquisition;
+- HardwarePacket;
+- SensorObservation adapter;
+- HardwareStatus.
+
+## Team Member 3 — Multi-Sensor Fusion and Localization Engineer
+
 Owns:
-Sensor Health
-Measurement Quality
-HAIF
-Adaptive Weights
-Fusion
-Confidence
-Reliability Diagnostics
-Team Member 4
-Localization and Rescue Decision Engineer
+
+- Sensor Health;
+- Measurement Quality;
+- HAIF;
+- Adaptive Weights;
+- Fusion;
+- Confidence;
+- Reliability Diagnostics;
+- Evidence Map;
+- Localization;
+- Localization Acceptance.
+
+## Team Member 4 — Victim Intelligence and AI Decision Engineer
+
 Owns:
-Evidence Map
-Localization
-Candidate Association
-Victim Tracking
-Vitality
-Rescue Priority
-Team Member 5
-AI and Product Intelligence Engineer
+
+- Candidate Association;
+- Victim Tracking;
+- Candidate Dataset Schema;
+- Candidate Classifier;
+- Calibration;
+- Uncertainty;
+- Abstention;
+- Explainability;
+- AI Evaluation;
+- Vitality;
+- Rescue Priority;
+- Multi-Victim Ranking.
+
+## Team Member 5 — Full-Stack Platform and Integration Engineer
+
 Owns:
-Candidate Classifier
-Calibration
-Uncertainty
-Abstention
-Explainability
-AI Evaluation
-Operational Dashboard
-31. Approval Criteria for Team Division
+
+- FastAPI / backend service;
+- Telemetry Integration;
+- API Contracts;
+- MissionState;
+- MATLAB/Python/HIL platform integration;
+- React / TypeScript / Vite dashboard;
+- Operational Map;
+- Mission/Victim/AI/Fusion/Hardware views;
+- system integration tests.
+
+---
+
+# 31. Approval Criteria for Team Division
+
 This workstream division is approved when:
+
 1. each member has one clear primary technical ownership area;
-2. all members can begin work in parallel;
-3. no workstream depends entirely on unfinished upstream code;
-4. dashboard work is treated as a full product responsibility;
-5. localization remains a dedicated heavy technical responsibility;
-6. embedded integration is represented explicitly;
-7. AI is represented as a complete pipeline rather than a single classifier;
-8. workload is reviewed after each sprint;
+2. all five members can begin in parallel using fixtures;
+3. the microcontroller/HIL path is treated as core scope;
+4. simulation and HIL converge on a common observation interface;
+5. HAIF and localization remain a coherent scientific workstream;
+6. AI is separate from the dashboard and remains above the deterministic pipeline;
+7. backend/dashboard/integration have a dedicated owner;
+8. workload is reviewed every sprint;
 9. peer review exists across workstreams;
-10. integration remains a shared responsibility.
+10. end-to-end integration remains a shared team responsibility.
