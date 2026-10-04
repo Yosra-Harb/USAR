@@ -1,7 +1,7 @@
 # USAR Intelligent Rescue System
 ## Interface Contracts Specification
 
-**Document:** 05_Interface_Contracts.md  
+**Document:** `05_Interface_Contracts.md`  
 **Project:** USAR Intelligent Rescue System  
 **Team Size:** 5 Members  
 **Purpose:** Define stable data contracts that allow all workstreams to develop in parallel  
@@ -13,7 +13,9 @@
 
 This document defines the data contracts exchanged between major modules of the USAR Intelligent Rescue System.
 
-These contracts are critical because they allow the five workstreams to develop independently using mocks or fixtures while preserving compatibility during integration.
+These contracts allow the five workstreams to develop independently using mocks or fixtures while preserving compatibility during integration.
+
+The microcontroller and Hardware-in-the-Loop path are core scope. Simulation and HIL shall converge into the same downstream processing pipeline through `SensorObservation` wherever practical.
 
 The main shared contracts are:
 
@@ -44,8 +46,6 @@ Each contract includes:
 ---
 
 # 2. General Contract Rules
-
-All shared contracts shall follow these rules.
 
 ## 2.1 Schema Version
 
@@ -95,11 +95,11 @@ Units shall be explicit and consistent.
 
 Recommended conventions:
 
-- distance: meters
-- time: seconds or milliseconds
-- probability/confidence: [0, 1]
-- normalized scores: [0, 1]
-- coordinates: meters in local mission frame
+- distance: meters;
+- time: seconds or milliseconds;
+- probability/confidence: `[0, 1]`;
+- normalized scores: `[0, 1]`;
+- coordinates: meters in local mission frame.
 
 ## 2.5 Missing Values
 
@@ -125,33 +125,35 @@ Shared states shall use explicit enumerated strings rather than free-form text.
 
 Non-breaking fields may be added within a minor version.
 
-Breaking changes require a major schema version increment.
-
-Example:
+Breaking changes require a major schema-version increment.
 
 ```text
 1.0 → 1.1   non-breaking
 1.x → 2.0   breaking
 ```
 
+## 2.8 Source Independence
+
+After creation of a valid `SensorObservation`, downstream processing shall not require separate algorithm implementations for Simulation Mode and HIL Mode.
+
 ---
 
 # 3. Contract Ownership Matrix
 
-| Contract | Primary Producer | Primary Consumer(s) |
+| Contract | Primary Producer / Owner | Primary Consumer(s) |
 |---|---|---|
-| ScenarioContext | Workstream 1 | Workstream 2, Evaluation |
-| HardwarePacket | Workstream 2 | Acquisition Adapter |
-| SensorObservation | Workstream 2 | Workstream 3 |
-| FusionOutput | Workstream 3 | Workstream 4, Dashboard |
-| LocalizationOutput | Workstream 4 | Tracking, AI, Dashboard |
-| VictimTrack | Workstream 4 | AI, Dashboard |
-| CandidateFeatureRecord | Workstreams 2–4 / assembled by 5 | AI Layer |
-| AIOutput | Workstream 5 | Workstream 4, Dashboard |
-| RescueDecision | Workstream 4 | Dashboard |
-| HardwareStatus | Workstream 2 | Dashboard |
-| MissionState | Integration Layer | Dashboard |
-| MissionEvent | Any major module | Timeline / Logging |
+| `ScenarioContext` | Workstream 1 | Workstream 2, Evaluation |
+| `HardwarePacket` | Workstream 2 | Workstream 2 Acquisition Adapter |
+| `SensorObservation` | Workstream 2 | Workstream 3 |
+| `FusionOutput` | Workstream 3 | Workstream 3 Localization, Workstream 5, Evaluation |
+| `LocalizationOutput` | Workstream 3 | Workstream 4, Workstream 5, Evaluation |
+| `VictimTrack` | Workstream 4 | Workstream 4 AI/Decision, Workstream 5 |
+| `CandidateFeatureRecord` | Workstream 4, using approved features from WS2–WS4 | Workstream 4 AI Layer |
+| `AIOutput` | Workstream 4 | Workstream 4 Decision, Workstream 5 |
+| `RescueDecision` | Workstream 4 | Workstream 5 |
+| `HardwareStatus` | Workstream 2 | Workstream 5 |
+| `MissionState` | Workstream 5 Integration Layer | Workstream 5 Dashboard |
+| `MissionEvent` | Any major module | Workstream 5 Timeline / Logging, Evaluation |
 
 ---
 
@@ -167,9 +169,9 @@ Workstream 1.
 
 ## 4.3 Consumers
 
-- Workstream 2
-- Evaluation
-- Testing
+- Workstream 2;
+- Evaluation;
+- Testing.
 
 ## 4.4 Required Fields
 
@@ -234,13 +236,15 @@ sensorDegradationProfile
 
 Defines the raw packet transmitted from the microcontroller to the host acquisition layer.
 
+This is a core HIL contract.
+
 ## 5.2 Producer
 
-Workstream 2.
+Workstream 2 microcontroller / embedded acquisition path.
 
 ## 5.3 Consumer
 
-Acquisition Adapter.
+Workstream 2 Acquisition Adapter.
 
 ## 5.4 Required Fields
 
@@ -276,11 +280,13 @@ status
 
 ## 5.6 Validation Rules
 
-- `sequence` must be monotonic where applicable.
-- required sensor fields must exist or be explicitly unavailable.
-- malformed packets shall be rejected.
-- missing sequence numbers shall be counted as packet loss.
-- invalid schema versions shall not be silently accepted.
+- `sequence` shall be monotonic where applicable;
+- required sensor fields shall exist or be explicitly unavailable;
+- malformed packets shall be rejected;
+- missing sequence numbers shall be counted as packet loss;
+- duplicate packets shall be detectable;
+- delayed packets shall not silently overwrite newer state;
+- unsupported schema versions shall not be silently accepted.
 
 ---
 
@@ -290,17 +296,22 @@ status
 
 Defines the normalized internal representation of sensor evidence.
 
-This is the key boundary between:
+This is the key convergence boundary:
 
 ```text
-Sensors / Embedded
-        ↓
-Fusion / Reliability
+Simulation Sensor Path ─┐
+                        ├─→ SensorObservation → HAIF / Localization
+HardwarePacket Path ────┘
 ```
 
 ## 6.2 Producer
 
 Workstream 2.
+
+The producer may use either:
+
+- simulation inputs derived from `ScenarioContext`;
+- validated `HardwarePacket` data.
 
 ## 6.3 Consumer
 
@@ -340,6 +351,8 @@ snr
 diagnostics
 ```
 
+The exact ownership of health/quality computation may evolve internally, but the contract fields remain stable. Workstream 3 is the scientific owner of HAIF health/quality logic; Workstream 2 may provide acquisition-level indicators and raw diagnostics.
+
 ## 6.6 Example
 
 ```json
@@ -348,7 +361,7 @@ diagnostics
   "missionId": "M042",
   "sequence": 1042,
   "timestamp": 1730000012345,
-  "sourceMode": "SIMULATION",
+  "sourceMode": "HIL",
   "probe": {
     "x": 4.2,
     "y": 7.1
@@ -376,10 +389,10 @@ diagnostics
 
 ## 6.7 Validation Rules
 
-- all scores in [0, 1];
-- all confidence-like values in [0, 1];
-- unavailable sensors must not contribute operationally;
-- probe coordinates must use mission coordinate convention;
+- all normalized scores in `[0,1]`;
+- all confidence-like values in `[0,1]`;
+- unavailable sensors shall not contribute operationally;
+- probe coordinates shall use the mission coordinate convention;
 - `sourceMode` shall be one of:
 
 ```text
@@ -401,9 +414,9 @@ Workstream 3.
 
 ## 7.3 Consumers
 
-- Workstream 4
-- Dashboard
-- Evaluation
+- Workstream 3 Localization;
+- Workstream 5 Dashboard/Backend;
+- Evaluation.
 
 ## 7.4 Required Fields
 
@@ -458,11 +471,11 @@ diagnostics
 
 ## 7.7 Validation Rules
 
-- `fusionScore` in [0, 1];
-- `confidence` in [0, 1];
-- all weights >= 0;
-- active weights should sum approximately to 1;
-- unavailable sensors must have zero operational weight.
+- `fusionScore` in `[0,1]`;
+- `confidence` in `[0,1]`;
+- all weights `>= 0`;
+- active weights should sum approximately to `1`;
+- unavailable sensors shall have zero operational weight.
 
 ---
 
@@ -470,18 +483,17 @@ diagnostics
 
 ## 8.1 Purpose
 
-Defines the spatial estimate produced by the localization layer.
+Defines the spatial estimate produced by Workstream 3 localization.
 
 ## 8.2 Producer
 
-Workstream 4.
+Workstream 3.
 
 ## 8.3 Consumers
 
-- Victim Tracking
-- AI feature generation
-- Dashboard
-- Evaluation
+- Workstream 4 Victim Tracking / AI;
+- Workstream 5 Dashboard/Backend;
+- Evaluation.
 
 ## 8.4 Required Fields
 
@@ -495,7 +507,7 @@ localizationConfidence
 evidencePeak
 ```
 
-## 8.5 Example
+## 8.5 Example — Accepted
 
 ```json
 {
@@ -513,7 +525,7 @@ evidencePeak
 }
 ```
 
-## 8.6 Rejected Example
+## 8.6 Example — Rejected
 
 ```json
 {
@@ -527,6 +539,13 @@ evidencePeak
   "reason": "INSUFFICIENT_EVIDENCE"
 }
 ```
+
+## 8.7 Validation Rules
+
+- confidence in `[0,1]`;
+- accepted results require a valid estimated position;
+- rejected results may use `null` position;
+- reason shall use a documented enum/string convention.
 
 ---
 
@@ -542,9 +561,8 @@ Workstream 4.
 
 ## 9.3 Consumers
 
-- Workstream 5 AI
-- Dashboard
-- Rescue Decision
+- Workstream 4 AI / Vitality / Rescue Decision;
+- Workstream 5 Dashboard/Backend.
 
 ## 9.4 Required Fields
 
@@ -601,11 +619,15 @@ ABSTAINED
 
 Defines the candidate-level feature vector consumed by the AI classifier.
 
-## 10.2 Producers
+## 10.2 Owner / Assembler
 
-Feature values originate from Workstreams 2, 3, and 4.
+Workstream 4 owns the final AI feature schema and assembly.
 
-Workstream 5 owns the final AI feature schema and assembly.
+Feature values may originate from:
+
+- Workstream 2 sensor processing;
+- Workstream 3 health/quality/fusion/localization;
+- Workstream 4 tracking history.
 
 ## 10.3 Required Metadata
 
@@ -617,7 +639,7 @@ featureVersion
 timestamp
 ```
 
-## 10.4 Example Feature Families
+## 10.4 Approved Feature Families
 
 ### Sensor Features
 
@@ -667,13 +689,13 @@ reliability indicators
 
 ## 10.5 Forbidden Features
 
-The AI feature record must not include:
+The AI feature record shall not include:
 
-- true victim label as an input;
+- true victim label as an input feature;
 - true victim coordinates;
 - distance to ground-truth victim;
 - future mission outcomes;
-- any derived field that directly leaks oracle information.
+- any field derived directly from oracle information.
 
 ## 10.6 Example
 
@@ -710,13 +732,13 @@ Defines the runtime output of the AI decision-support layer.
 
 ## 11.2 Producer
 
-Workstream 5.
+Workstream 4.
 
 ## 11.3 Consumers
 
-- Workstream 4
-- Dashboard
-- Audit Log
+- Workstream 4 Rescue Decision;
+- Workstream 5 Backend/Dashboard;
+- Audit Log.
 
 ## 11.4 Required Fields
 
@@ -818,7 +840,7 @@ Workstream 4.
 
 ## 12.3 Consumer
 
-Dashboard.
+Workstream 5 Backend/Dashboard.
 
 ## 12.4 Required Fields
 
@@ -874,7 +896,7 @@ Workstream 2.
 
 ## 13.3 Consumer
 
-Dashboard.
+Workstream 5 Backend/Dashboard.
 
 ## 13.4 Required Fields
 
@@ -894,6 +916,7 @@ packetLossRate
 temperatureC
 supplyVoltage
 lastPacketSequence
+sensorStatus
 ```
 
 ## 13.6 Connection States
@@ -936,9 +959,8 @@ Any major module.
 
 ## 14.3 Consumers
 
-- Logging
-- Timeline
-- Evaluation
+- Workstream 5 Logging/Timeline;
+- Evaluation.
 
 ## 14.4 Required Fields
 
@@ -972,15 +994,15 @@ message
 
 Defines the unified dashboard-facing state of the mission.
 
-This is the main contract consumed by the frontend.
+This is the main contract assembled by Workstream 5 and consumed by the frontend.
 
 ## 15.2 Producer
 
-Integration Layer.
+Workstream 5 Integration/Backend Layer.
 
 ## 15.3 Consumer
 
-Dashboard.
+Workstream 5 Dashboard.
 
 ## 15.4 Required Top-Level Fields
 
@@ -1068,37 +1090,49 @@ timeline
 
 ---
 
-# 16. Contract Dependency Chain
+# 16. Contract Dependency Chains
 
-The core operational chain is:
+## 16.1 Simulation Mode
 
 ```text
 ScenarioContext
-        ↓
+    ↓
+Simulation Sensor Path
+    ↓
 SensorObservation
-        ↓
+    ↓
 FusionOutput
-        ↓
+    ↓
 LocalizationOutput
-        ↓
+    ↓
 VictimTrack
-        ↓
+    ↓
 CandidateFeatureRecord
-        ↓
+    ↓
 AIOutput
-        ↓
+    ↓
 RescueDecision
-        ↓
+    ↓
 MissionState
 ```
 
-HIL inserts:
+## 16.2 Hardware-in-the-Loop Mode
 
 ```text
+Physical / Emulated Sensors
+    ↓
+Microcontroller
+    ↓
 HardwarePacket
-        ↓
+    ↓
+Acquisition Adapter
+    ↓
 SensorObservation
+    ↓
+Same Downstream Chain
 ```
+
+The microcontroller/HIL path is a required project path, not a future-only extension.
 
 ---
 
@@ -1125,10 +1159,13 @@ interfaces/fixtures/mission_state.json
 These fixtures shall be used for:
 
 - parallel development;
+- interface tests;
 - integration tests;
 - frontend development;
+- backend development;
 - schema validation;
-- regression tests.
+- regression tests;
+- HIL emulation before physical sensors are available.
 
 ---
 
@@ -1136,7 +1173,7 @@ These fixtures shall be used for:
 
 Each module shall validate incoming shared data.
 
-Validation should cover:
+Validation shall cover:
 
 - required fields;
 - schema version;
@@ -1145,7 +1182,8 @@ Validation should cover:
 - type consistency;
 - missing values;
 - timestamp validity;
-- identifier presence.
+- identifier presence;
+- source mode where applicable.
 
 Invalid input must not silently become valid output.
 
@@ -1159,14 +1197,16 @@ Required initial tests:
 
 ```text
 ScenarioContext → Sensor Layer
-HardwarePacket → SensorObservation
-SensorObservation → Fusion
+HardwarePacket → Acquisition Adapter
+Acquisition Adapter → SensorObservation
+SensorObservation → HAIF/Fusion
 FusionOutput → Localization
-LocalizationOutput → Tracking
+LocalizationOutput → Victim Tracking
 VictimTrack → CandidateFeatureRecord
 CandidateFeatureRecord → AI
-AIOutput → Decision
+AIOutput → Rescue Decision
 RescueDecision → MissionState
+HardwareStatus → MissionState
 MissionState → Dashboard
 ```
 
@@ -1202,6 +1242,8 @@ MODEL_UNAVAILABLE
 INVALID_FEATURE_VECTOR
 HIGH_UNCERTAINTY
 COMMUNICATION_LOSS
+PACKET_LOSS
+HARDWARE_DEGRADED
 ```
 
 ---
@@ -1217,7 +1259,7 @@ A breaking change requires:
 3. affected contracts;
 4. affected workstreams;
 5. reviewer approval;
-6. schema version update;
+6. schema-version update;
 7. fixture update;
 8. test update;
 9. migration note;
@@ -1231,31 +1273,36 @@ Recommended primary reviewers:
 
 | Contract | Owner | Reviewer |
 |---|---|---|
-| ScenarioContext | WS1 | WS2 |
-| HardwarePacket | WS2 | WS3 |
-| SensorObservation | WS2 | WS3 |
-| FusionOutput | WS3 | WS4 |
-| LocalizationOutput | WS4 | WS5 |
-| VictimTrack | WS4 | WS5 |
-| CandidateFeatureRecord | WS5 | WS3 + WS4 |
-| AIOutput | WS5 | WS4 |
-| RescueDecision | WS4 | WS5 |
-| HardwareStatus | WS2 | WS5 |
-| MissionState | WS5 / Integration | WS1 |
+| `ScenarioContext` | WS1 | WS2 |
+| `HardwarePacket` | WS2 | WS3 |
+| `SensorObservation` | WS2 | WS3 |
+| `FusionOutput` | WS3 | WS4 |
+| `LocalizationOutput` | WS3 | WS4 |
+| `VictimTrack` | WS4 | WS5 |
+| `CandidateFeatureRecord` | WS4 | WS3 + WS5 |
+| `AIOutput` | WS4 | WS5 |
+| `RescueDecision` | WS4 | WS5 |
+| `HardwareStatus` | WS2 | WS5 |
+| `MissionState` | WS5 | WS1 |
+| `MissionEvent` | Producing WS | WS5 / Integration |
 
 ---
 
-# 23. Sprint 1 Contract Freeze
+# 23. Sprint 0 Contract Freeze
 
-Before full Sprint 1 implementation begins, the team shall freeze the first working versions of:
+Before Sprint 1 feature implementation begins, the team shall freeze the first working versions of:
 
 ```text
+ScenarioContext v1.0
+HardwarePacket v1.0
 SensorObservation v1.0
 FusionOutput v1.0
 LocalizationOutput v1.0
 VictimTrack v1.0
 CandidateFeatureRecord v1.0
 AIOutput v1.0
+RescueDecision v1.0
+HardwareStatus v1.0
 MissionState v1.0
 ```
 
@@ -1270,81 +1317,45 @@ It means changes become controlled rather than informal.
 An interface is considered ready when:
 
 1. fields are documented;
-2. required vs optional fields are clear;
-3. units are documented;
-4. enum values are documented;
-5. validation rules exist;
-6. example payload exists;
-7. fixture exists;
-8. producer can generate it;
-9. consumer can parse it;
-10. interface test passes.
+2. producer is identified;
+3. consumer is identified;
+4. required/optional fields are explicit;
+5. validation rules are documented;
+6. at least one valid fixture exists;
+7. at least one invalid case exists where appropriate;
+8. an interface test exists or is planned in Sprint 0;
+9. schema version is assigned;
+10. owner and reviewer approve it.
 
 ---
 
-# 25. Recommended Repository Location
+# 25. Ground-Truth Safety Rule
 
-Interface definitions should be stored under:
+Operational contracts shall not expose evaluation-only ground truth during an active mission.
 
-```text
-interfaces/
-├── schemas/
-├── fixtures/
-└── examples/
-```
+Forbidden operational exposure includes, unless explicitly released post-mission for evaluation:
 
-Suggested examples:
+- true victim coordinates;
+- true victim count used as decision input;
+- true class label used as AI input;
+- distance to true victim;
+- oracle-derived outcomes.
 
-```text
-interfaces/
-├── schemas/
-│   ├── sensor_observation.schema.json
-│   ├── fusion_output.schema.json
-│   ├── ai_output.schema.json
-│   └── mission_state.schema.json
-│
-├── fixtures/
-│   ├── sensor_observation.json
-│   ├── fusion_output.json
-│   ├── ai_output.json
-│   └── mission_state.json
-│
-└── examples/
-    └── README.md
-```
+The backend/dashboard shall preserve this safety boundary.
 
 ---
 
-# 26. Final Parallel-Development Rule
+# 26. Contract Acceptance Criteria
 
-Each workstream shall develop against the contract rather than against another member's unfinished internal code.
+This specification is approved for Sprint 0 when:
 
-The core rule is:
-
-```text
-Depend on interfaces, not implementations.
-```
-
-This rule is what allows all five team members to work in parallel.
-
----
-
-# 27. Next Documentation Step
-
-After the interface contracts are approved, create:
-
-`06_Test_Strategy.md`
-
-That document will define:
-
-- unit testing;
-- interface testing;
-- integration testing;
-- regression testing;
-- AI validation testing;
-- HIL testing;
-- end-to-end testing;
-- acceptance testing;
-- test ownership;
-- quality gates;
-- and release criteria.
+1. the ownership matrix matches `04_Team_Workstreams.md`;
+2. the microcontroller/HIL path is represented as core scope;
+3. Simulation and HIL converge through `SensorObservation`;
+4. AI and dashboard ownership are separated;
+5. Workstream 3 owns both fusion and localization outputs;
+6. Workstream 4 owns victim/AI/decision outputs;
+7. Workstream 5 owns `MissionState` assembly and product-facing integration;
+8. fixtures can be created for every required boundary;
+9. no operational contract leaks ground truth;
+10. all five workstreams can begin independently using the frozen v1.0 fixtures.
