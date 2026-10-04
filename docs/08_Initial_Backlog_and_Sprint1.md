@@ -1,19 +1,20 @@
 # USAR Intelligent Rescue System
-## Initial Backlog and Sprint 1 Plan
+## Initial Backlog and Sprint 0 Plan
 
-**Document:** 08_Initial_Backlog_and_Sprint1.md  
+**Document:** `08_Initial_Backlog_and_Sprint_Plan.md`  
+**Replaces:** `08_Initial_Backlog_and_Sprint1.md`  
 **Project:** USAR Intelligent Rescue System  
 **Team Size:** 5 Members  
-**Delivery Model:** Hybrid Agile  
-**Purpose:** Convert approved project documents into executable Jira work and define Sprint 1  
+**Delivery Model:** Hybrid Agile / Scrum-style Sprints  
+**Purpose:** Convert approved project documents into executable Jira work and define Sprint 0 before feature implementation  
 
 ---
 
 # 1. Purpose
 
-This document defines the initial implementation backlog and the first development sprint for the USAR Intelligent Rescue System.
+This document defines the initial Jira backlog structure and the Sprint 0 work required before full feature implementation begins.
 
-It is the final required planning document before implementation begins.
+It is the final minimum planning document before the team moves from documentation to execution.
 
 This document translates:
 
@@ -28,21 +29,23 @@ This document translates:
 into:
 
 - Jira Epics;
-- Stories;
-- Tasks;
-- Sprint 1 goals;
-- ownership;
+- Sprint 0 Stories;
+- workstream ownership;
 - dependencies;
 - acceptance criteria;
+- interface fixtures;
+- repository readiness;
 - and integration checkpoints.
+
+Detailed future sprint scheduling belongs in Jira and may evolve through Sprint Planning.
 
 ---
 
 # 2. Delivery Approach
 
-The project will use a Hybrid Agile model.
+The project uses a Hybrid Agile delivery model with Scrum-style iterations.
 
-The team will combine:
+The team combines:
 
 - stable project scope;
 - explicit architecture;
@@ -51,53 +54,63 @@ The team will combine:
 - continuous integration;
 - peer review;
 - regression testing;
+- research-governance gates;
+- HIL milestones;
 - and milestone-based delivery.
 
-Recommended sprint duration:
+Recommended implementation sprint duration:
 
 ```text
 1–2 weeks
 ```
 
-For the initial team setup, a 1-week Sprint 1 is recommended because its purpose is to validate parallel development and interfaces rather than deliver the complete system.
+Sprint 0 is shorter and focuses on engineering readiness rather than major feature completion.
+
+Recommended Sprint 0 duration:
+
+```text
+3–5 working days
+```
 
 ---
 
-# 3. Initial Jira Epics
+# 3. Final Workstream Ownership
+
+| Workstream | Owner Scope |
+|---|---|
+| WS1 | Simulation and Mission Systems |
+| WS2 | Sensors, Microcontroller, Acquisition, and Signal Processing |
+| WS3 | HAIF Fusion and Localization |
+| WS4 | Victim Tracking, AI Intelligence, Vitality, and Rescue Decision |
+| WS5 | Backend, Operational Dashboard, and System Integration |
+
+The microcontroller/HIL path is core project scope.
+
+---
+
+# 4. Initial Jira Epics
 
 Create the following Epics in Jira.
 
 ## EPIC-01 — Project Foundation
 
-Purpose:
-
-Maintain approved project-definition documents and governance.
+**Owner:** Entire Team / Technical Lead coordination
 
 Includes:
 
-- Charter;
-- Requirements;
-- Architecture;
-- Workstreams;
-- Interfaces;
-- Testing;
-- Risks.
-
-Status at Sprint 1 start:
-
-```text
-Mostly Complete
-```
+- approved documentation;
+- repository structure;
+- contribution rules;
+- contracts;
+- fixtures;
+- CI/test commands;
+- risk governance.
 
 ---
 
 ## EPIC-02 — Simulation and Mission Engine
 
-Owner:
-
-```text
-Workstream 1
-```
+**Owner:** Workstream 1
 
 Scope:
 
@@ -107,39 +120,36 @@ Scope:
 - search path;
 - coverage;
 - scenario fixtures;
-- ground-truth isolation.
+- ground-truth isolation;
+- mission events.
 
 ---
 
-## EPIC-03 — Sensor and Embedded Systems
+## EPIC-03 — Sensors, Microcontroller, and Acquisition
 
-Owner:
-
-```text
-Workstream 2
-```
+**Owner:** Workstream 2
 
 Scope:
 
-- radar;
-- thermal;
-- acoustic;
+- UWB radar path;
+- thermal path;
+- acoustic path;
+- simulated sensor behavior;
 - signal preprocessing;
-- microcontroller;
+- microcontroller firmware/acquisition;
 - communication protocol;
+- `HardwarePacket`;
 - acquisition adapter;
 - packet validation;
-- HIL.
+- HIL;
+- `SensorObservation`;
+- `HardwareStatus`.
 
 ---
 
 ## EPIC-04 — HAIF and Adaptive Fusion
 
-Owner:
-
-```text
-Workstream 3
-```
+**Owner:** Workstream 3
 
 Scope:
 
@@ -149,41 +159,40 @@ Scope:
 - HAIF;
 - adaptive weights;
 - confidence;
-- reliability diagnostics.
+- reliability diagnostics;
+- fusion explainability.
 
 ---
 
-## EPIC-05 — Localization and Victim Tracking
+## EPIC-05 — Localization
 
-Owner:
-
-```text
-Workstream 4
-```
+**Owner:** Workstream 3
 
 Scope:
 
-- evidence map;
+- Evidence Map;
+- spatial evidence update;
+- reliability masking;
 - localization;
 - localization confidence;
-- victim candidate creation;
-- association;
-- track management.
+- acceptance/rejection;
+- localization evaluation.
 
 ---
 
-## EPIC-06 — AI Decision Intelligence
+## EPIC-06 — Victim Tracking and AI Intelligence
 
-Owner:
-
-```text
-Workstream 5
-```
+**Owner:** Workstream 4
 
 Scope:
 
+- candidate creation;
+- association;
+- track management;
+- candidate feature schema;
+- AI dataset pipeline;
 - candidate classification;
-- training pipeline;
+- training;
 - calibration;
 - uncertainty;
 - abstention;
@@ -194,38 +203,33 @@ Scope:
 
 ## EPIC-07 — Vitality and Rescue Decision
 
-Primary Owner:
-
-```text
-Workstream 4
-```
+**Owner:** Workstream 4
 
 Scope:
 
 - Vitality Index;
 - rescue priority;
 - multi-victim ranking;
-- operator-facing recommendation metadata.
+- recommendation metadata.
 
 ---
 
-## EPIC-08 — Operational Dashboard
+## EPIC-08 — Backend and Operational Dashboard
 
-Primary Owner:
-
-```text
-Workstream 5
-```
+**Owner:** Workstream 5
 
 Scope:
 
+- backend service;
+- telemetry ingestion/consumption;
+- mission-state assembly;
+- REST/API contracts;
+- MATLAB/Python/HIL platform integration;
 - operational map;
 - mission status;
 - victims;
 - AI outputs;
-- sensor health;
-- fusion intelligence;
-- localization;
+- sensor/fusion/localization intelligence;
 - vitality;
 - hardware status;
 - timeline;
@@ -235,36 +239,24 @@ Scope:
 
 ## EPIC-09 — System Integration
 
-Owner:
-
-```text
-Entire Team
-```
-
-Coordination:
-
-```text
-Technical Lead
-```
+**Owner:** Entire Team  
+**Coordination:** Workstream 5 + Technical Lead
 
 Scope:
 
 - module adapters;
 - contract validation;
 - MATLAB/Python integration;
-- HIL integration;
-- unified MissionState;
+- microcontroller/core integration;
+- backend/dashboard integration;
+- unified `MissionState`;
 - end-to-end pipeline.
 
 ---
 
 ## EPIC-10 — Testing and Validation
 
-Owner:
-
-```text
-Entire Team
-```
+**Owner:** Entire Team
 
 Scope:
 
@@ -274,29 +266,28 @@ Scope:
 - AI validation;
 - HIL tests;
 - end-to-end tests;
-- acceptance tests.
+- acceptance tests;
+- research-validation gates.
 
 ---
 
 ## EPIC-11 — Final Demonstration and Documentation
 
-Owner:
-
-```text
-Entire Team
-```
+**Owner:** Entire Team
 
 Scope:
 
-- final demo;
+- final simulation demo;
+- final HIL demo;
 - reproducible run configuration;
-- fallback demo;
-- project report;
-- presentation assets.
+- fallback demo plan;
+- report;
+- presentation assets;
+- GitHub release documentation.
 
 ---
 
-# 4. Backlog Priority Policy
+# 5. Backlog Priority Policy
 
 Every backlog item shall receive one of:
 
@@ -307,65 +298,67 @@ COULD
 WON'T FOR CURRENT RELEASE
 ```
 
-Sprint 1 shall include MUST items only.
+Sprint 0 contains only MUST readiness items.
 
 ---
 
-# 5. Sprint 1 Goal
+# 6. Sprint 0 Goal
 
 ## Shared Sprint Goal
 
 ```text
-All five workstreams can execute independently against agreed v1.0
-interfaces, and the team can demonstrate one controlled data flow
-across at least two adjacent modules without relying on unfinished code.
+All five workstreams can begin independently against approved v1.0
+contracts and fixtures, the microcontroller/HIL path has a defined
+working protocol boundary, and the repository/Jira workflow supports
+parallel development without depending on unfinished upstream code.
 ```
 
-Sprint 1 is not intended to complete major algorithms.
+Sprint 0 does **not** attempt to complete the scientific algorithms.
 
-Its purpose is to prove:
+It proves:
 
 - repository structure;
 - team workflow;
-- interfaces;
-- mocks;
-- basic module skeletons;
-- test execution;
-- pull-request flow;
-- and first integration.
+- final ownership;
+- interface freeze;
+- fixtures;
+- module entry points;
+- test commands;
+- PR/review flow;
+- microcontroller/HIL contract readiness;
+- first producer-consumer integrations.
 
 ---
 
-# 6. Sprint 1 Entry Criteria
+# 7. Sprint 0 Entry Criteria
 
-Sprint 1 shall begin only when:
+Sprint 0 may begin when:
 
 - `01_Project_Charter.md` is approved;
 - `02_Requirements.md` is approved;
 - `03_System_Architecture.md` is approved;
-- `04_Team_Workstreams.md` is approved;
-- `05_Interface_Contracts.md` is approved;
-- `06_Test_Strategy.md` is approved;
+- revised `04_Team_Workstreams.md` is approved;
+- revised `05_Interface_Contracts.md` is approved;
+- revised `06_Test_Strategy.md` is approved;
 - `07_Risk_Register.md` is approved;
 - the five team members are identified;
-- repository access is confirmed;
-- Jira access is confirmed;
-- core interfaces are frozen as v1.0 for Sprint 1.
+- GitHub access is confirmed;
+- Jira access is confirmed.
+
+Contracts become frozen as v1.0 **during Sprint 0**, not before the team starts Sprint 0.
 
 ---
 
-# 7. Sprint 1 Workstream 1 Backlog
+# 8. Sprint 0 — Workstream 1 Backlog
 
-## Story S1-WS1-01 — Create Scenario Configuration Model
+## Story S0-WS1-01 — Validate ScenarioContext v1.0
 
 **Epic:** Simulation and Mission Engine  
 **Owner:** Workstream 1  
 **Reviewer:** Workstream 2  
-**Priority:** MUST  
+**Priority:** MUST
 
-### Requirements
-
-Related:
+### Related Requirements
 
 ```text
 FR-001
@@ -376,36 +369,29 @@ FR-004
 
 ### Tasks
 
-- define scenario configuration structure;
+- confirm scenario configuration structure;
 - include scenario type;
 - include random seed;
-- include debris;
-- include noise;
-- include burial depth;
-- include victim count;
-- include vital strength;
-- generate one valid `ScenarioContext`;
-- create one fixture.
+- include debris/noise/burial depth;
+- include victim count/vital strength;
+- include probe state;
+- create `ScenarioContext` fixture;
+- keep evaluation-only ground truth outside the operational fixture.
 
 ### Acceptance Criteria
 
-- scenario can be created from configuration;
-- same seed reproduces same configuration;
-- `ScenarioContext` matches interface v1.0;
-- ground truth is stored separately;
-- unit tests pass.
+- fixture conforms to contract v1.0;
+- same seed/configuration can be represented reproducibly;
+- no ground-truth leakage exists in operational fields;
+- Workstream 2 can parse the fixture.
 
 ---
 
-## Story S1-WS1-02 — Create Mission Controller Skeleton
-
-**Epic:** Simulation and Mission Engine  
-**Owner:** Workstream 1  
-**Priority:** MUST  
+## Story S0-WS1-02 — Create Mission Controller Entry Point
 
 ### Tasks
 
-Create initial states:
+Define initial states:
 
 ```text
 INITIALIZING
@@ -418,43 +404,42 @@ COMPLETED
 ERROR
 ```
 
-Implement valid transitions.
+Create a minimal executable mission-controller skeleton or documented entry point.
 
 ### Acceptance Criteria
 
-- controller initializes;
-- valid transition sequence runs;
-- invalid state transition is handled;
-- state transitions are logged.
+- initial state can be created;
+- a valid state transition can be demonstrated;
+- transition/event format is documented;
+- future implementation has a stable entry point.
 
 ---
 
-## Story S1-WS1-03 — Create Probe and Path Fixture
+## Story S0-WS1-03 — Create Probe Fixture
 
 ### Tasks
 
-- create initial probe position;
-- generate small path fixture;
-- track visited cells;
-- expose probe state for downstream tests.
+- define initial probe position;
+- define path/visited-cell example;
+- expose probe state needed by Workstream 2.
 
 ### Acceptance Criteria
 
-- probe fixture is reproducible;
-- path can be consumed by Workstream 2.
+- fixture is deterministic;
+- downstream sensor work can begin without the final search algorithm.
 
 ---
 
-# 8. Sprint 1 Workstream 2 Backlog
+# 9. Sprint 0 — Workstream 2 Backlog
 
-## Story S1-WS2-01 — Define Hardware Packet v1.0
+## Story S0-WS2-01 — Freeze HardwarePacket v1.0
 
-**Epic:** Sensor and Embedded Systems  
+**Epic:** Sensors, Microcontroller, and Acquisition  
 **Owner:** Workstream 2  
 **Reviewer:** Workstream 3  
-**Priority:** MUST  
+**Priority:** MUST
 
-### Requirements
+### Related Requirements
 
 ```text
 FR-016
@@ -462,181 +447,171 @@ FR-017
 FR-018
 FR-019
 FR-020
+FR-021
+FR-022
+FR-023
 ```
 
 ### Tasks
 
-- implement `HardwarePacket`;
-- include sequence number;
-- include timestamp;
-- include three sensor values;
-- include availability flags;
-- create valid fixture;
-- create invalid fixture.
+- confirm packet fields;
+- define sequence behavior;
+- define timestamp convention;
+- define sensor-value fields;
+- define availability/status flags;
+- create valid packet fixture;
+- create malformed packet fixture;
+- document Serial/USB framing approach.
 
 ### Acceptance Criteria
 
-- valid packet parses;
-- malformed packet is rejected;
+- valid packet can be parsed;
+- malformed packet is rejected by a smoke validator or planned test harness;
 - missing sequence is detectable;
-- schema matches `05_Interface_Contracts.md`.
+- schema matches `05_Interface_Contracts.md`;
+- protocol boundary is clear enough to begin firmware/acquisition work.
 
 ---
 
-## Story S1-WS2-02 — Create SensorObservation Adapter
+## Story S0-WS2-02 — Freeze SensorObservation v1.0
 
 ### Tasks
 
-Convert:
+Confirm the adapter boundary:
 
 ```text
-HardwarePacket
+Simulation Input ─┐
+                  ├─→ SensorObservation
+HardwarePacket ───┘
 ```
 
-or simulation input into:
+Create:
 
-```text
-SensorObservation
-```
+- one Simulation Mode fixture;
+- one HIL Mode fixture.
 
 ### Acceptance Criteria
 
-- both source types produce compatible output;
+- both fixtures use the same downstream schema;
 - `sourceMode` is correct;
-- all required fields exist;
-- range validation is implemented.
+- required fields exist;
+- Workstream 3 can consume them without manual restructuring.
 
 ---
 
-## Story S1-WS2-03 — Sensor Processing Skeleton
+## Story S0-WS2-03 — Create Sensor Processing Entry Points
 
 ### Tasks
 
-Create initial processing stubs/interfaces for:
+Create initial interfaces/skeletons for:
 
 - radar;
 - thermal;
-- acoustic.
-
-These do not need full scientific behavior in Sprint 1.
+- acoustic;
+- signal preprocessing;
+- hardware-status reporting.
 
 ### Acceptance Criteria
 
-- each module receives controlled input;
-- each returns normalized output;
-- each has at least one unit test.
+- each path has an identifiable entry point;
+- mock input can return contract-compatible output;
+- at least one smoke test command is documented.
 
 ---
 
-# 9. Sprint 1 Workstream 3 Backlog
+# 10. Sprint 0 — Workstream 3 Backlog
 
-## Story S1-WS3-01 — Implement Fusion Consumer for SensorObservation
+## Story S0-WS3-01 — Create SensorObservation Consumer
 
 **Epic:** HAIF and Adaptive Fusion  
 **Owner:** Workstream 3  
 **Reviewer:** Workstream 4  
-**Priority:** MUST  
+**Priority:** MUST
 
 ### Tasks
 
 - parse `SensorObservation`;
-- validate availability;
-- validate health;
-- validate quality;
-- create fusion processing entry point.
+- validate modality availability;
+- validate expected numeric ranges;
+- establish the fusion processing entry point.
 
 ### Acceptance Criteria
 
 - valid fixture is accepted;
-- invalid fixture is rejected;
-- unavailable sensor is identifiable;
-- module can run independently.
+- invalid fixture is rejected or flagged;
+- module can run independently of Workstream 2's unfinished implementation.
 
 ---
 
-## Story S1-WS3-02 — Baseline Fusion Skeleton
+## Story S0-WS3-02 — Freeze FusionOutput v1.0
 
 ### Tasks
 
-- implement simple baseline weighted fusion;
-- calculate provisional fusion score;
-- calculate initial confidence;
-- produce `FusionOutput`.
+Define output mapping for:
+
+- fusion score;
+- confidence;
+- weights;
+- effective support;
+- agreement;
+- diagnostics.
 
 ### Acceptance Criteria
 
-- output matches contract v1.0;
-- active weights sum approximately to 1;
-- unavailable sensors receive zero operational weight;
-- tests pass.
+- fixture matches contract;
+- unavailable-sensor behavior is represented;
+- Workstream 5 can parse the fixture.
 
 ---
 
-## Story S1-WS3-03 — HAIF Module Integration Point
+## Story S0-WS3-03 — Freeze LocalizationOutput v1.0
 
 ### Tasks
 
-Create stable entry point for existing HAIF implementation.
+- define accepted case;
+- define rejected case;
+- define location/confidence fields;
+- create fixtures for both cases;
+- document the existing/future localization entry point.
 
 ### Acceptance Criteria
 
-- HAIF can accept standardized `SensorObservation`;
-- output can be mapped to `FusionOutput`;
-- existing internal algorithm is not duplicated;
-- regression entry point is documented.
+- Workstream 4 can consume the fixture;
+- rejected result supports `null` position;
+- confidence/range rules are explicit.
 
 ---
 
-# 10. Sprint 1 Workstream 4 Backlog
+## Story S0-WS3-04 — Preserve Research Regression Entry Point
 
-## Story S1-WS4-01 — Create Evidence Map Skeleton
+### Tasks
 
-**Epic:** Localization and Victim Tracking  
+- identify the command/function used to run the protected HAIF/localization regression suite;
+- document how changes will be checked before merge;
+- do not modify frozen research thresholds during Sprint 0.
+
+### Acceptance Criteria
+
+- regression entry point is documented;
+- research code can be protected during team restructuring.
+
+---
+
+# 11. Sprint 0 — Workstream 4 Backlog
+
+## Story S0-WS4-01 — Freeze VictimTrack v1.0
+
+**Epic:** Victim Tracking and AI Intelligence  
 **Owner:** Workstream 4  
 **Reviewer:** Workstream 5  
-**Priority:** MUST  
+**Priority:** MUST
 
 ### Tasks
 
-- initialize map;
-- accept probe position;
-- accept fusion score;
-- apply first spatial evidence update;
-- expose map state.
-
-### Acceptance Criteria
-
-- mock `FusionOutput` can update evidence map;
-- output is deterministic for fixed input;
-- basic unit test passes.
-
----
-
-## Story S1-WS4-02 — Localization Interface v1.0
-
-### Tasks
-
-- consume `FusionOutput`;
-- expose `LocalizationOutput`;
-- support accepted and rejected result;
-- create test fixture.
-
-### Acceptance Criteria
-
-- schema matches contract;
-- rejected state supports null position;
-- localization confidence is in [0,1].
-
----
-
-## Story S1-WS4-03 — VictimTrack Skeleton
-
-### Tasks
-
-Create initial track structure with:
+Create initial track structure containing:
 
 - ID;
-- location;
+- estimated location;
 - localization confidence;
 - detection count;
 - independent views;
@@ -647,22 +622,33 @@ Create initial track structure with:
 ### Acceptance Criteria
 
 - fixture validates;
-- AI workstream can consume it.
+- AI feature builder can consume it;
+- Workstream 5 can display it through mock `MissionState`.
 
 ---
 
-# 11. Sprint 1 Workstream 5 Backlog
-
-## Story S1-WS5-01 — Initialize AI Project Structure
-
-**Epic:** AI Decision Intelligence  
-**Owner:** Workstream 5  
-**Reviewer:** Workstream 3 or 4  
-**Priority:** MUST  
+## Story S0-WS4-02 — Freeze CandidateFeatureRecord and AIOutput v1.0
 
 ### Tasks
 
-Create initial structure:
+- confirm feature metadata;
+- define forbidden oracle fields;
+- create valid candidate fixture;
+- create forbidden-field fixture;
+- create AI output fixture including uncertainty and abstention.
+
+### Acceptance Criteria
+
+- feature schema is versioned;
+- oracle fields are explicitly forbidden;
+- AI output supports `ACCEPT_TRUE_TRACK`, `REJECT_HARD_NEGATIVE`, and `ABSTAIN`;
+- Workstream 5 can consume the AI fixture.
+
+---
+
+## Story S0-WS4-03 — Initialize AI Project Structure
+
+Create initial structure such as:
 
 ```text
 ai/
@@ -678,36 +664,60 @@ ai/
 
 ### Acceptance Criteria
 
-- structure exists;
-- basic environment setup documented;
-- test command executes.
+- structure exists or equivalent structure is approved;
+- environment/setup is documented;
+- test command executes;
+- no sealed-test data is used for development setup.
 
 ---
 
-## Story S1-WS5-02 — CandidateFeatureRecord Loader
+## Story S0-WS4-04 — Freeze RescueDecision v1.0
 
 ### Tasks
 
-- consume candidate fixture;
-- validate required metadata;
-- reject forbidden oracle fields;
-- expose feature vector.
+- define vitality field;
+- define priority enum;
+- define recommended action;
+- create fixture.
 
 ### Acceptance Criteria
 
-- valid fixture loads;
-- forbidden field test fails correctly;
-- feature schema version is checked.
+- Workstream 5 can consume the fixture;
+- output does not expose evaluation-only ground truth.
 
 ---
 
-## Story S1-WS5-03 — Initialize Dashboard Project
+# 12. Sprint 0 — Workstream 5 Backlog
 
-**Epic:** Operational Dashboard  
+## Story S0-WS5-01 — Initialize Backend / Integration Structure
+
+**Epic:** Backend and Operational Dashboard  
+**Owner:** Workstream 5  
+**Reviewer:** Workstream 1  
+**Priority:** MUST
 
 ### Tasks
 
-Initialize:
+- confirm backend project location;
+- confirm FastAPI entry point or equivalent approved backend service;
+- create/verify integration modules;
+- define how `MissionState` will be assembled from fixtures;
+- define safe operational/evaluation boundary.
+
+### Acceptance Criteria
+
+- backend starts locally or a skeleton health endpoint runs;
+- configuration approach is documented;
+- `MissionState` can be produced from fixture data or a mock adapter;
+- no scientific algorithm is duplicated in the backend.
+
+---
+
+## Story S0-WS5-02 — Initialize Dashboard Project
+
+### Tasks
+
+Confirm/initialize:
 
 ```text
 React
@@ -715,50 +725,91 @@ TypeScript
 Vite
 ```
 
-Create page skeleton:
+Create/verify primary layout entry points such as:
 
 ```text
 MissionStatusStrip
 OperationalMap
 DecisionWorkspace
-BottomIntelligenceTabs
+VictimIntelligence
+FusionIntelligence
+SensorReadings
+HardwareStatus
+Timeline
 ```
 
 ### Acceptance Criteria
 
 - dashboard launches locally;
 - mock `MissionState` loads;
-- mission ID appears;
-- probe position appears;
-- one victim fixture appears;
-- no live backend is required.
+- mission status is visible;
+- at least one victim fixture can be rendered;
+- hardware state can be rendered;
+- no live backend is required for this Sprint 0 story.
 
 ---
 
-## Story S1-WS5-04 — MissionState Fixture Renderer
+## Story S0-WS5-03 — Freeze MissionState v1.0
 
 ### Tasks
 
-- parse `MissionState`;
-- render basic mission status;
-- render sensor status;
-- render AI state;
-- render victim priority.
+- map sensor/fusion/localization/victim/AI/decision/hardware sections;
+- create `mission_state.json` fixture;
+- define controlled error behavior for schema mismatch.
 
 ### Acceptance Criteria
 
-- frontend uses contract only;
-- frontend does not depend on MATLAB internal structures.
+- dashboard can parse it;
+- backend can assemble it from mock inputs;
+- HIL state is represented;
+- AI abstention is representable;
+- no ground-truth leakage exists during active mission mode.
 
 ---
 
-# 12. Sprint 1 Shared Integration Tasks
+## Story S0-WS5-04 — Establish Integration / CI Smoke Workflow
 
-## Story S1-INT-01 — Create Interfaces Directory
+### Tasks
 
-**Epic:** System Integration  
-**Owner:** Technical Lead + Team  
-**Priority:** MUST  
+- document backend test command;
+- document dashboard build/test command;
+- add initial CI where feasible;
+- ensure shared fixtures are reachable by integration tests.
+
+### Acceptance Criteria
+
+- at least one automated smoke check runs on a PR or locally through a documented command;
+- repository integration path is reproducible.
+
+---
+
+# 13. Sprint 0 Shared Repository Tasks
+
+## S0-REPO-01 — Create / Verify Development Branch
+
+Recommended:
+
+```text
+main
+develop
+```
+
+Feature work branches from `develop`.
+
+---
+
+## S0-REPO-02 — Protect Main
+
+Where available:
+
+- require pull request;
+- require review;
+- prevent accidental direct feature development;
+- require selected checks before merge when feasible.
+
+---
+
+## S0-REPO-03 — Create Interface Directories
 
 Create:
 
@@ -771,7 +822,7 @@ interfaces/
 
 ---
 
-## Story S1-INT-02 — Add Initial Fixtures
+## S0-REPO-04 — Add Initial Fixtures
 
 Create:
 
@@ -784,128 +835,129 @@ localization_output.json
 victim_track.json
 candidate_features.json
 ai_output.json
+rescue_decision.json
+hardware_status.json
 mission_state.json
 ```
 
 ### Acceptance Criteria
 
-- all fixtures are valid;
-- all five workstreams can consume their required fixtures.
+- every fixture matches the approved contract;
+- all five workstreams can consume their required fixture.
 
 ---
 
-## Story S1-INT-03 — First Cross-Module Integration
+# 14. Sprint 0 Shared Integration Stories
+
+## S0-INT-01 — First HIL Contract Smoke Path
 
 Target:
 
 ```text
+HardwarePacket Fixture
+        ↓
+Acquisition Adapter / Parser
+        ↓
 SensorObservation
-        ↓
-Fusion
-        ↓
-FusionOutput
 ```
 
 ### Acceptance Criteria
 
-- Workstream 2 fixture is consumed by Workstream 3;
+- valid packet maps correctly;
+- invalid packet fails safely;
+- no downstream scientific code is required.
+
+---
+
+## S0-INT-02 — First Fusion Contract Smoke Path
+
+Target:
+
+```text
+SensorObservation Fixture
+        ↓
+Workstream 3 Consumer
+        ↓
+FusionOutput Fixture / Skeleton
+```
+
+### Acceptance Criteria
+
 - no manual field conversion is required;
 - contract test passes.
 
 ---
 
-## Story S1-INT-04 — First Dashboard Contract Integration
+## S0-INT-03 — First Product Contract Smoke Path
 
 Target:
 
 ```text
 MissionState Fixture
         ↓
-Dashboard
+Backend / Dashboard
 ```
 
 ### Acceptance Criteria
 
-- dashboard renders mission state;
-- schema mismatch produces controlled error;
-- no hard-coded scientific output is required.
+- backend/dashboard consume the same contract;
+- schema mismatch produces a controlled error;
+- hardware and AI states are representable.
 
 ---
 
-# 13. Sprint 1 Testing Tasks
+# 15. Sprint 0 Testing Tasks
 
-## S1-TEST-01 — Interface Validation Smoke Tests
+## S0-TEST-01 — Interface Validation Smoke Tests
 
 Validate:
 
 ```text
+ScenarioContext
 HardwarePacket
 SensorObservation
 FusionOutput
 LocalizationOutput
 VictimTrack
 CandidateFeatureRecord
+AIOutput
+RescueDecision
+HardwareStatus
 MissionState
 ```
 
 ---
 
-## S1-TEST-02 — Regression Smoke Entry Point
+## S0-TEST-02 — Regression Entry-Point Check
 
-Ensure the existing core regression suite can still be launched from the reorganized repository or documented location.
+Ensure the protected core regression suite can still be launched from the reorganized repository or from a documented location.
 
-Sprint 1 does not require migration of every legacy test.
+Sprint 0 does not require migration of every legacy test.
 
 It requires preserving access to validated regression behavior.
 
 ---
 
-## S1-TEST-03 — AI Leakage Guard
+## S0-TEST-03 — AI Leakage Guard Skeleton
 
-Create a first automated test that rejects candidate feature records containing forbidden oracle fields.
-
----
-
-# 14. Sprint 1 Repository Tasks
-
-## S1-REPO-01 — Create Development Branch
-
-Recommended branches:
-
-```text
-main
-develop
-```
+Create or define an automated check that rejects candidate feature records containing forbidden oracle fields.
 
 ---
 
-## S1-REPO-02 — Protect Main
+## S0-TEST-04 — HIL Failure Fixture Set
 
-Where available:
+Prepare at least:
 
-- require pull request;
-- require review;
-- prevent accidental direct feature work.
-
----
-
-## S1-REPO-03 — Create Workstream Branches
-
-Examples:
-
-```text
-feature/scenario-foundation
-feature/sensor-acquisition
-feature/fusion-interface
-feature/localization-interface
-feature/ai-dashboard-foundation
-```
+- valid packet;
+- malformed packet;
+- missing-sequence case;
+- disconnected hardware status.
 
 ---
 
-# 15. Sprint 1 Jira Setup
+# 16. Jira Setup for Sprint 0
 
-For every Sprint 1 Story, Jira should include:
+Every Sprint 0 Story should include:
 
 ```text
 Summary
@@ -914,9 +966,10 @@ Description
 Owner
 Reviewer
 Priority
-Requirements
+Requirement References
 Dependencies
 Acceptance Criteria
+Story Points / Effort
 Sprint
 Status
 ```
@@ -935,7 +988,7 @@ Testing
 Done
 ```
 
-Optional:
+Optional explicit status:
 
 ```text
 Blocked
@@ -943,9 +996,9 @@ Blocked
 
 ---
 
-# 16. Sprint 1 Dependency Rules
+# 17. Sprint 0 Dependency Rule
 
-Sprint 1 must not create blocking chains.
+Sprint 0 must not create blocking chains.
 
 Use this rule:
 
@@ -955,173 +1008,169 @@ If upstream code is unavailable, use the approved fixture.
 
 Examples:
 
-Workstream 3 does not wait for Workstream 2.
-
-It uses:
-
-```text
-sensor_observation.json
-```
-
-Workstream 4 uses:
-
-```text
-fusion_output.json
-```
-
-Workstream 5 uses:
-
-```text
-candidate_features.json
-mission_state.json
-```
+- WS2 uses `scenario_context.json`;
+- WS3 uses `sensor_observation.json`;
+- WS4 uses `localization_output.json` and candidate fixtures;
+- WS5 uses `mission_state.json`, `ai_output.json`, `hardware_status.json`, and `rescue_decision.json`.
 
 ---
 
-# 17. Sprint 1 Integration Checkpoint
+# 18. Sprint 0 Mid-Sprint Integration Checkpoint
 
-Mid-sprint, the team shall verify:
+Verify:
 
-1. all five branches exist;
-2. all members have committed code;
-3. all required fixtures exist;
-4. Workstream 3 can consume Workstream 2's contract;
-5. Workstream 5 dashboard can consume `MissionState`;
-6. no breaking interface change has occurred silently.
+1. all five members have active branches/issues;
+2. all required fixtures exist or have assigned owners;
+3. no workstream is waiting for final upstream code;
+4. `HardwarePacket` → `SensorObservation` boundary is agreed;
+5. Workstream 3 can consume `SensorObservation`;
+6. Workstream 4 can consume localization/candidate fixtures;
+7. Workstream 5 can consume `MissionState`;
+8. no breaking interface change has occurred silently;
+9. research/fresh/sealed data remain protected.
 
 ---
 
-# 18. Sprint 1 Review Demo
+# 19. Sprint 0 Review Demo
 
-At Sprint Review, demonstrate:
+At Sprint Review, demonstrate engineering readiness.
 
-## Demo A
+## Demo A — Simulation Boundary
 
 ```text
-ScenarioContext
-→ controlled sensor input
+ScenarioContext Fixture
+→ Sensor Layer Consumer
+```
+
+## Demo B — HIL Boundary
+
+```text
+HardwarePacket Fixture
+→ Packet Validation
 → SensorObservation
 ```
 
-## Demo B
+## Demo C — Scientific Core Boundary
 
 ```text
 SensorObservation
-→ baseline fusion
+→ HAIF/Fusion Entry Point
 → FusionOutput
 ```
 
-## Demo C
+and/or:
 
 ```text
-Mock FusionOutput
-→ localization skeleton
+FusionOutput
+→ Localization Entry Point
 → LocalizationOutput
 ```
 
-## Demo D
+## Demo D — AI Boundary
 
 ```text
 CandidateFeatureRecord
-→ AI input validation
+→ AI Input Validation
+→ AIOutput Fixture / Skeleton
 ```
 
-## Demo E
+## Demo E — Product Boundary
 
 ```text
 MissionState
-→ Dashboard
+→ Backend / Dashboard
 ```
 
-The goal is not scientific performance yet.
+The goal is not final scientific performance.
 
-The goal is integrated engineering readiness.
+The goal is safe parallel engineering readiness.
 
 ---
 
-# 19. Sprint 1 Exit Criteria
+# 20. Sprint 0 Exit Criteria
 
-Sprint 1 is complete when:
+Sprint 0 is complete when:
 
-- all five members have a functioning workstream repository area;
-- interfaces v1.0 are usable;
+- all five workstreams have a functioning repository area/entry point;
+- v1.0 interfaces are usable and frozen under change control;
 - required fixtures exist;
-- first interface tests pass;
+- microcontroller packet/protocol boundary is documented;
+- HIL fixtures exist;
+- first interface smoke tests pass;
 - at least one cross-module integration works;
 - dashboard renders a real contract fixture;
-- AI feature guard exists;
+- backend consumes or assembles a mock mission state;
+- AI leakage guard exists or is executable as an agreed test;
 - PR/review workflow has been used;
-- no Critical Sprint 1 blocker remains open.
+- no Critical Sprint 0 blocker remains open.
 
 ---
 
-# 20. Initial Product Backlog After Sprint 1
+# 21. Initial Product Backlog After Sprint 0
 
-The following backlog items are expected to become active after Sprint 1.
+The following areas become active through later sprints.
 
-## Simulation
+## Simulation / Mission — WS1
 
 - complete scenario engine;
-- complete search path;
+- search path;
 - random challenge generation;
-- mission replay.
+- coverage;
+- mission replay;
+- mission event generation.
 
-## Sensors / Embedded
+## Sensors / Microcontroller — WS2
 
-- complete radar model;
-- complete thermal model;
-- complete acoustic model;
-- complete firmware;
-- live serial integration.
+- complete radar processing/model;
+- complete thermal processing/model;
+- complete acoustic processing/model;
+- firmware/acquisition;
+- live Serial/USB integration;
+- packet validation;
+- HIL status telemetry;
+- common `SensorObservation` adapter.
 
-## Fusion
+## HAIF / Localization — WS3
 
-- integrate full HAIF;
+- full HAIF integration;
 - health/quality pipeline;
 - conflict/innovation logic;
-- regression protection.
-
-## Localization
-
-- full evidence map;
+- effective support;
+- regression protection;
+- Evidence Map;
 - selective localization;
-- track association;
-- multiple-victim handling.
+- localization validation.
 
-## AI
+## Tracking / AI / Decision — WS4
 
-- dataset ingestion;
+- candidate association;
+- multi-victim tracking;
+- dataset generation;
 - training;
 - calibration;
 - uncertainty;
 - abstention;
 - explainability;
-- sealed-test evaluation.
-
-## Rescue Decision
-
+- sealed-test evaluation;
 - vitality;
-- rescue ranking;
-- recommendation logic.
+- rescue ranking.
 
-## Dashboard
+## Backend / Dashboard / Integration — WS5
 
-- final operational map;
+- complete telemetry bridge;
+- mission API;
+- MATLAB/Python/HIL integration;
+- operational map;
 - AI panels;
-- fusion panels;
+- fusion/localization panels;
 - hardware status;
 - timeline;
-- evaluation view.
-
-## Integration
-
-- MATLAB ↔ Python;
-- microcontroller ↔ core pipeline;
-- core pipeline ↔ dashboard.
+- evaluation view;
+- live end-to-end integration.
 
 ---
 
-# 21. Definition of Ready for Future Stories
+# 22. Definition of Ready for Future Stories
 
 A story is ready to enter a sprint when:
 
@@ -1132,62 +1181,74 @@ A story is ready to enter a sprint when:
 5. dependencies are known;
 6. acceptance criteria are written;
 7. required fixture exists if upstream code is unavailable;
-8. requirement references exist.
+8. requirement references exist;
+9. protected research/sealed data are identified if applicable.
 
 ---
 
-# 22. Definition of Done
+# 23. Definition of Done
 
 A story is Done when:
 
 1. implementation is complete;
 2. unit tests pass;
 3. interface tests pass where applicable;
-4. regression remains green;
+4. protected regression remains green;
 5. code is committed;
 6. pull request is reviewed;
-7. documentation is updated;
-8. acceptance criteria are demonstrated;
-9. Jira status is updated.
+7. integration is demonstrated where applicable;
+8. documentation is updated;
+9. acceptance criteria are demonstrated;
+10. Jira status is updated.
 
 ---
 
-# 23. Sprint 1 Risk Focus
+# 24. Sprint 0 Risk Focus
 
-The team shall monitor:
+The team shall actively monitor:
 
 ```text
 R-001 Scope Creep
 R-002 Late Integration
 R-004 Interface Breakage
+R-006 HAIF Regression
+R-009 Oracle Leakage
+R-011 Hardware Availability
 R-017 Isolated Development
+R-020 Demo Hardware Failure
 R-021 Git Workflow Problems
 R-025 Cross-Technology Schema Mismatch
 ```
 
 ---
 
-# 24. What Does Not Need to Be Completed Before Starting Sprint 1
+# 25. What Does Not Need to Be Complete Before Sprint 1
 
-The following do not need to be fully implemented before Sprint 1:
+Sprint 0 does not require completion of:
 
+- full scenario engine;
+- full sensor algorithms;
+- final microcontroller firmware;
+- physical availability of every final sensor;
 - full HAIF development;
 - final localization algorithm;
+- final victim tracking;
 - final trained AI model;
 - final dashboard;
-- live sensor hardware;
 - final HIL demonstration;
 - complete experiment suite;
 - final report;
 - final presentation.
 
-These are implementation deliverables, not pre-development documents.
+These are implementation deliverables for later sprints.
+
+However, the contracts, entry points, fixtures, owners, and test paths required to develop them must be ready.
 
 ---
 
-# 25. Pre-Development Documentation Complete
+# 26. Pre-Development Documentation Set
 
-Once this document is approved, the minimum required pre-development documentation set is:
+The minimum documentation set remains:
 
 ```text
 docs/
@@ -1198,11 +1259,40 @@ docs/
 ├── 05_Interface_Contracts.md
 ├── 06_Test_Strategy.md
 ├── 07_Risk_Register.md
-└── 08_Initial_Backlog_and_Sprint1.md
+└── 08_Initial_Backlog_and_Sprint_Plan.md
 ```
 
-No additional planning document is required before the team begins Sprint 1.
-
-Additional documentation should be created only when a real implementation need appears.
+Additional planning documents are not required merely for completeness. Create new documentation when a real implementation or governance need appears.
 
 ---
+
+# 27. Next Action After Approval
+
+1. Replace/update documents 04, 05, 06, and 08 in GitHub.
+2. Rename the old `08_Initial_Backlog_and_Sprint1.md` to `08_Initial_Backlog_and_Sprint_Plan.md`.
+3. Create the Jira Epics.
+4. Create **Sprint 0**.
+5. Add the Sprint 0 Stories from this document.
+6. Assign Owners and Reviewers.
+7. Estimate Story Points / effort.
+8. Create/verify `develop` and feature branches.
+9. Create the initial interface fixtures.
+10. Start all five workstreams in parallel.
+
+At this point, the project moves from:
+
+```text
+Planning
+```
+
+to:
+
+```text
+Sprint 0 — Engineering Readiness
+```
+
+and then to:
+
+```text
+Sprint 1 — Feature Implementation
+```
